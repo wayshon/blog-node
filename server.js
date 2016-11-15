@@ -7,12 +7,12 @@ var bodyParser = require('body-parser');
 
 //打印日志到本地文件
 var fs = require('fs');
-var accessLog = fs.createWriteStream('access.log', {flags: 'a'});
-var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
+var accessLog = fs.createWriteStream('access.log', { flags: 'a' });
+var errorLog = fs.createWriteStream('error.log', { flags: 'a' });
 
 var app = express();
 
-app.set('port', process.env.PORT || 8802);
+app.set('port', process.env.PORT || 9911);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));    //设置 views 文件夹为存放视图文件的目录, 即存放模板文件的地方,__dirname 为全局变量,存储当前正在执行的脚本所在的目录。
@@ -40,20 +40,20 @@ app.use(function (err, req, res, next) {
 secret 用来防止篡改 cookie，key 的值为 cookie 的名字，通过设置 cookie 的 maxAge 值设定 cookie 的生存期，
 这里我们设置 cookie 的生存期为 30 天，
 设置它的 store 参数为 MongoStore 实例，把会话信息存储到数据库中，以避免丢失。*/
-// var session = require('express-session');
-// var MongoStore = require('connect-mongo')(session);
-// app.use(session({
-//   resave:false,//添加这行  
-//   saveUninitialized: true,//添加这行
-//   secret: settings.cookieSecret,
-//   key: settings.db,//cookie name
-//   cookie: {maxAge: 1000 * 60 * 60 * 24},// 1天
-//   store: new MongoStore({
-//     db: settings.db,
-//     host: settings.host,
-//     port: settings.port
-//   })
-// }));
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+app.use(session({
+  resave:false,//添加这行  
+  saveUninitialized: true,//添加这行
+  secret: 'myblog',
+  key: 'blog',//cookie name
+  cookie: {maxAge: 1000 * 60 * 60 * 24},// 1天
+  store: new MongoStore({
+    db: 'blog',
+    host: 'localhost',
+    port: 27017
+  })
+}));
 /*
 注意： connect-mongo 最新版需要改成如：
 store: new MongoStore({
@@ -62,12 +62,12 @@ store: new MongoStore({
 */
 
 //设置跨域访问
-app.all('*', function(req, res, next) {
+app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", req.headers.origin);
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, If-Modified-Since");
-    // res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-    // res.header("Content-Type", "application/json;charset=utf-8");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.header("Content-Type", "application/json;charset=utf-8");
     next();
 });
 
@@ -93,7 +93,7 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(err.status || 500);
     res.end('500 - Server Error -- blog-node')
-  });
+});
 
 app.listen(app.get('port'), () => {
     console.log(`run in: http://localhost:${app.get('port')}`);

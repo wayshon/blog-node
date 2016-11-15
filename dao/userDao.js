@@ -15,36 +15,56 @@ var pool = mysql.createPool($db.mysql);
 // 向前台返回JSON方法的简单封装
 var jsonWrite = function (res, ret) {
     if (typeof ret === 'undefined') {
-        res.json({
+        res.send({
             code: '500',
             msg: '操作失败'
         });
     } else {
-        res.json(ret);
+        res.send(ret);
     }
 };
 
 module.exports = {
     add(req, res, next) {
+        var name = req.body.username,
+            md5 = crypto.createHash('md5'),
+            password = md5.update(req.body.password).digest('hex');
         pool.getConnection(function (err, connection) {
-            // 获取前台页面传过来的参数
-            var param = req.query || req.params;
-
-            // 建立连接，向表中插入值
-            // 'INSERT INTO user(id, name, age) VALUES(0,?,?)',
-            connection.query($sql.insert, [param.name, param.age], function (err, result) {
-                if (result) {
-                    result = {
-                        code: 200,
-                        msg: '增加成功'
-                    };
-                }
-
-                // 以json形式，把操作结果返回给前台页面
-                jsonWrite(res, result);
-
-                // 释放连接 
+            if (err) {
+                jsonWrite(res, undefined);
                 connection.release();
+                return;
+            }
+            connection.query($sql.queryByName, username, function (err, result) {
+                if (err) {
+                    jsonWrite(res, undefined);
+                    connection.release();
+                    return;
+                }
+                if (result) {
+                    jsonWrite(res, {
+                        code: '500',
+                        msg: '用户已存在'
+                    });
+                    connection.release();
+                } else {
+                    connection.query($sql.insert, [name, password], function (err, result) {
+                        if (err) {
+                            jsonWrite(res, undefined);
+                            connection.release();
+                            return;
+                        }
+                        if (result) {
+                            result = {
+                                code: 200,
+                                msg: '注册成功'
+                            };
+                        }
+                        jsonWrite(res, result);
+                        // 释放连接 
+                        connection.release();
+                    });
+                }
             });
         });
     },
@@ -106,28 +126,30 @@ module.exports = {
     },
     queryByName(req, res, next) {
         var md5 = crypto.createHash('md5'),
-            username = req.body.username,
-            password = md5.update(req.body.password).digest('hex');
+            name = req.query.username,
+            password = md5.update(req.query.password).digest('hex');
 
         pool.getConnection(function (err, connection) {
-            connection.query($sql.queryByName, username, function (err, result) {
+            connection.query($sql.queryByName, name, function (err, result) {
                 if (err) {
                     jsonWrite(res, undefined);
+                    connection.release();
                     return;
                 }
-                if (result == null) {
+                if (!result) {
                     jsonWrite(res, {
                         code: '500',
                         msg: '用户不存在'
                     });
                 }
+                result = JSON.parse(JSON.stringify(result))[0].password;
                 if (result.password != password) {
                     jsonWrite(res, {
                         code: '500',
                         msg: '密码错误'
                     });
                 }
-                req.session.user = user;
+                // req.session.user = user;
 
                 jsonWrite(res, {
                     code: '200',
@@ -142,9 +164,8 @@ module.exports = {
         pool.getConnection(function (err, connection) {
             connection.query($sql.queryAll, function (err, result) {
                 // console.log(err);
-                // jsonWrite(res, result);
-                // connection.release();
-                return result;
+                jsonWrite(res, result);
+                connection.release();
             });
         });
     }
