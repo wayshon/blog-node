@@ -12,7 +12,7 @@ var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
 
 var app = express();
 
-app.set('port', process.env.PORT || 8802);
+app.set('port', process.env.PORT || 9911);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));    //设置 views 文件夹为存放视图文件的目录, 即存放模板文件的地方,__dirname 为全局变量,存储当前正在执行的脚本所在的目录。
@@ -61,15 +61,17 @@ store: new MongoStore({
 })
 */
 
-//设置跨域访问
-app.all('*', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", req.headers.origin);
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, If-Modified-Since");
-    // res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-    // res.header("Content-Type", "application/json;charset=utf-8");
-    next();
-});
+// //设置跨域访问
+// app.all('*', function(req, res, next) {
+//     res.header("Access-Control-Allow-Origin", req.headers.origin);
+//     res.header("Access-Control-Allow-Credentials", "true");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, If-Modified-Since");
+//     // res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+//     // res.header("Content-Type", "application/json;charset=utf-8");
+//     next();
+// });
+
+app.use(require('cors')());
 
 //创建子域名和处理
 var vhost = require('vhost')
