@@ -1,4 +1,5 @@
-var userDao = require('../dao/userDao');
+var userDao = require('../dao/userDao'),
+    articleDao = require('../dao/articleDao');
 
 module.exports = function (app) {
     //获取主页及文章
@@ -17,13 +18,17 @@ module.exports = function (app) {
     //     userDao.queryByName_get(req, res, next);
     // });
 
-    app.get('/test2', (req, res, next) => {
-        console.log(req.session.user);
-        res.end('1111111111111');
-    });
-    app.get('/test1', (req, res, next) => {
-        req.session.user="ttttttt";
-        res.end('22222222222');
+    // app.get('/test1', (req, res, next) => {
+    //     req.session.user="ttttttt";
+    //     res.end('111111111111');
+    // });
+    // app.get('/test2', (req, res, next) => {
+    //     console.log(req.session);
+    //     res.end(req.session.user);
+    // });
+
+    app.get('/aaa', (req, res, next) => {
+        articleDao.add(req, res, next);
     });
 
     //判断已登录

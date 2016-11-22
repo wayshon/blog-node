@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/wayshon/blog-node#readme",
   "dependencies": {
+    "async": "^2.1.2",
     "body-parser": "~1.15.1",
     "connect-mongo": "0.8.2",
     "cookie-parser": "~1.4.3",

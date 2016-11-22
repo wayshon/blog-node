@@ -47,11 +47,11 @@ var sessionStore = new MySQLStore(settings);
 // }));
 
 app.use(session({
-  resave:false,//添加这行  
+  resave: true,//添加这行  
   saveUninitialized: true,//添加这行
   secret: settings.cookieSecret,
   key: settings.database,//cookie name
-  cookie: {maxAge: 1000 * 60 * 30},// 30分钟
+  cookie: {maxAge: 10000},// 30分钟
   store: sessionStore
 }));
 
