@@ -14,9 +14,6 @@ module.exports = function (app) {
     app.post('/login', (req, res, next) => {
         userDao.queryByName(req, res, next);
     });
-    // app.get('/login', (req, res, next) => {
-    //     userDao.queryByName_get(req, res, next);
-    // });
 
     // app.get('/test1', (req, res, next) => {
     //     req.session.user="ttttttt";
@@ -27,8 +24,37 @@ module.exports = function (app) {
     //     res.end(req.session.user);
     // });
 
-    app.get('/aaa', (req, res, next) => {
+    app.get('/test', (req, res, next) => {
+        articleDao.update(req, res, next);
+    });
+
+    app.post('/article', (req, res, next) => {
         articleDao.add(req, res, next);
+    });
+
+    //进入标签页,一红有哪些标签
+    app.get('/tags', function (req, res) {
+        articleDao.allTags(req, res, next);
+    });
+
+    //获取指定标签的文章
+    app.get('/tags/:tag', function (req, res) {
+        articleDao.queryByTagname(req, res, next);
+    });
+
+    //获取根据title搜索到的结果
+    app.get('/search', function (req, res) {
+        articleDao.queryByTitle(req, res, next);
+    });
+
+    //根据用户返回其文章
+    app.get('/u/:userid', function (req, res) {
+        articleDao.queryByUserid(req, res, next);
+    });
+
+    //根据id获取指定文章
+    app.get('/p/:articleid', function (req, res) {
+        articleDao.queryById(req, res, next);
     });
 
     //判断已登录

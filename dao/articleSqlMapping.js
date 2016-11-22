@@ -5,6 +5,7 @@ var article = {
     queryById: 'select * from article where id=?',
     queryByTitle: 'select * from article where title=?',
     queryByUserid: 'select * from article where userid=?',
+    queryByTagname: 'select * from article where id in (select articleid from article_tags where tagname=?)',
     queryAll: 'select * from article'
 };
 
