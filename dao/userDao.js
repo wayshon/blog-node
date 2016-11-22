@@ -70,21 +70,22 @@ module.exports = {
                     connection.release();
                     return;
                 }
+                
                 if (result == null) {
                     jsonWrite(res, {
                         code: '500',
                         msg: '用户不存在'
                     });
-                } else if (result.password != password) {
+                } else if (result[0].password != password) {
                     jsonWrite(res, {
                         code: '500',
                         msg: '密码错误'
                     });
                 } else {
-                    // req.session.user = user;
+                    req.session.user = result[0].id;
                     jsonWrite(res, {
                         code: '200',
-                        userid: result.id,
+                        userid: result[0].id,
                         msg: '登录成功'
                     });
                 }
@@ -93,41 +94,41 @@ module.exports = {
             });
         });
     },
-    queryByName_get(req, res, next) {
-        var md5 = crypto.createHash('md5'),
-            username = req.query.username,
-            password = md5.update(req.query.password).digest('hex');
+    // queryByName_get(req, res, next) {
+    //     var md5 = crypto.createHash('md5'),
+    //         username = req.query.username,
+    //         password = md5.update(req.query.password).digest('hex');
 
-        pool.getConnection((err, connection) => {
-            connection.query($sql.queryByName, username, function (err, result) {
-                if (err) {
-                    jsonWrite(res, undefined);
-                    connection.release();
-                    return;
-                }
-                if (result == null) {
-                    jsonWrite(res, {
-                        code: '500',
-                        msg: '用户不存在'
-                    });
-                } else if (result.password != password) {
-                    jsonWrite(res, {
-                        code: '500',
-                        msg: '密码错误'
-                    });
-                } else {
-                    // req.session.user = user;
-                    jsonWrite(res, {
-                        code: '200',
-                        userid: result.id,
-                        msg: '登录成功'
-                    });
-                }
+    //     pool.getConnection((err, connection) => {
+    //         connection.query($sql.queryByName, username, function (err, result) {
+    //             if (err) {
+    //                 jsonWrite(res, undefined);
+    //                 connection.release();
+    //                 return;
+    //             }
+    //             if (result == null) {
+    //                 jsonWrite(res, {
+    //                     code: '500',
+    //                     msg: '用户不存在'
+    //                 });
+    //             } else if (result.password != password) {
+    //                 jsonWrite(res, {
+    //                     code: '500',
+    //                     msg: '密码错误'
+    //                 });
+    //             } else {
+    //                 req.session.user = username;
+    //                 jsonWrite(res, {
+    //                     code: '200',
+    //                     userid: result.id,
+    //                     msg: '登录成功'
+    //                 });
+    //             }
 
-                connection.release();
-            });
-        });
-    },
+    //             connection.release();
+    //         });
+    //     });
+    // },
     queryAll(req, res, next) {
         pool.getConnection((err, connection) => {
             connection.query($sql.queryAll, function (err, result) {
