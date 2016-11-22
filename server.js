@@ -33,6 +33,28 @@ app.use(function (err, req, res, next) {
   next();
 });
 
+var session = require('express-session');
+var MySQLStore = require('express-mysql-session')(session);
+var settings = require('./conf/setting');
+var sessionStore = new MySQLStore(settings);
+
+// app.use(session({
+//     key: 'session_cookie_name',
+//     secret: 'session_cookie_secret',
+//     store: sessionStore,
+//     resave: true,
+//     saveUninitialized: true
+// }));
+
+app.use(session({
+  resave:false,//添加这行  
+  saveUninitialized: true,//添加这行
+  secret: settings.cookieSecret,
+  key: settings.database,//cookie name
+  cookie: {maxAge: 1000 * 60 * 30},// 30分钟
+  store: sessionStore
+}));
+
 // //数据库
 // var settings = require('./setting');     //数据库名与端口号对象
 

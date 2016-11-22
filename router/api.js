@@ -13,7 +13,41 @@ module.exports = function (app) {
     app.post('/login', (req, res, next) => {
         userDao.queryByName(req, res, next);
     });
-    app.get('/login', (req, res, next) => {
-        userDao.queryByName_get(req, res, next);
+    // app.get('/login', (req, res, next) => {
+    //     userDao.queryByName_get(req, res, next);
+    // });
+
+    app.get('/test2', (req, res, next) => {
+        console.log(req.session.user);
+        res.end('1111111111111');
     });
+    app.get('/test1', (req, res, next) => {
+        req.session.user="ttttttt";
+        res.end('22222222222');
+    });
+
+    //判断已登录
+    function checkLogin(req, res, next) {
+        if (!req.session.user) {
+            var content = {
+                code: '500',
+                user: '',
+                msg: '未登录!'
+            }
+            res.end(JSON.stringify(content));
+        }
+        next();
+    }
+    //判断未登录
+    function checkNotLogin(req, res, next) {
+        if (req.session.user) {
+            var content = {
+                code: '200',
+                user: req.session.user,
+                msg: '已登录!'
+            }
+            res.end(JSON.stringify(content));
+        }
+        next();
+    }
 }
