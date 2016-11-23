@@ -25,7 +25,7 @@ module.exports = {
         // var title = req.body.title,
         //     content = req.body.content,
         //     tags = req.body.tags,
-        //     userid = req.session.user;
+        //     userid = req.session.user,
         //     date = new Date().toLocaleString();
 
         var title = 'ttttt',
@@ -44,8 +44,6 @@ module.exports = {
                 }
 
                 connection.query($articlesql.insert, [userid, title, content, date], (err, result) => {
-
-                    console.log(err)
                     if (result) {
                         var articleid = result.insertId;
                         var funobj = {};
@@ -93,14 +91,15 @@ module.exports = {
         // var id = req.body.id,
         //     title = req.body.title,
         //     content = req.body.content,
-        //     tags = req.body.tag;
+        //     tags = req.body.tag,
+        //     date = new Date().toLocaleString();
 
         var id = 5,
             title = 'uuuuuuu',
             content = 'asdfghjkl',
             tags = ['boxing', 'game'],
             date = new Date().toLocaleString();
-            
+
         pool.getConnection((err, connection) => {
             //开启事务
             connection.beginTransaction(function (err) {
@@ -158,7 +157,80 @@ module.exports = {
                 });
             });
         });
+    },
+    reprint(req, res, next) {
+        // var title = "[转载]" + req.body.title,
+        //     content = req.body.content,
+        //     tags = req.body.tags,
+        //     userid = req.session.user,
+        //     date = new Date().toLocaleString(),
+        //     fromid = req.body.fromid;
 
+        var title = "[转载]" + 'ttttt',
+            content = 'qwertyuuioplkjhgfdsazxcvbnm',
+            tags = ['bick', 'swiming'],
+            userid = 6,
+            date = new Date().toLocaleString(),
+            fromid = req.body.fromid;
+
+        pool.getConnection((err, connection) => {
+            //开启事务
+            connection.beginTransaction(function (err) {
+                if (err) {
+                    jsonWrite(res, undefined);
+                    connection.release();
+                    return;
+                }
+
+                connection.query($articlesql.reprint, [userid, title, content, date, fromid], (err, result) => {
+                    if (result) {
+                        var articleid = result.insertId;
+                        var funobj = {
+                            insertReprint(cb) {
+                                connection.query($articlesql.insertReprint, [fromid, articleid], (err, result) => {
+                                    cb(err, result);
+                                });
+                            }
+                        };
+                        tags.forEach((v, i) => {
+                            funobj['tagfun' + i] = function (cb) {
+                                connection.query($tagsql.insert, v, (err, result) => {
+                                    cb(err, result);
+                                });
+                            }
+                            funobj['tag_articlefun' + i] = function (cb) {
+                                connection.query($article_tagssql.insert, [v, articleid], (err, result) => {
+                                    cb(err, result);
+                                });
+                            }
+                        })
+
+                        async.parallel(funobj, function (error, result) {
+                            connection.commit(function (err, info) {
+                                if (err) {
+                                    console.log("执行事务失败，" + err);
+                                    connection.rollback(function (err) {
+                                        connection.release();
+                                        return;
+                                    });
+                                } else {
+                                    result = {
+                                        code: 200,
+                                        msg: '发布成功'
+                                    };
+                                    jsonWrite(res, result);
+                                    connection.release();
+                                }
+                            })
+                        });
+                    } else {
+                        jsonWrite(res, undefined);
+                        connection.release();
+                        return;
+                    }
+                });
+            });
+        });
     },
     delete(req, res, next) {
         var id = parseInt(req.params.id);
@@ -178,7 +250,62 @@ module.exports = {
         });
     },
     queryById(req, res, next) {
-        var id = parseInt(req.params.articleid);
+        var id = req.params.articleid;
+        pool.getConnection((err, connection) => {
+            //开启事务
+            connection.beginTransaction(function (err) {
+                if (err) {
+                    jsonWrite(res, undefined);
+                    connection.release();
+                    return;
+                }
+
+                var funobj = {
+                    queryArticle(cb) {
+                        connection.query($articlesql.queryById, id, function (err, result) {
+                            cb(err, result);
+                        });
+                    },
+                    queryTags(cb) {
+                        connection.query($article_tagssql.queryByArticleid, id, function (err, result) {
+                            cb(err, result);
+                        });
+                    },
+                    queryComments(cb) {
+                        connection.query($articlesql.queryComment, id, function (err, result) {
+                            cb(err, result);
+                        });
+                    },
+                    reprintCount(cb) {
+                        connection.query($articlesql.reprintCount, id, function (err, result) {
+                            cb(err, result);
+                        });
+                    },
+                };
+
+                async.parallel(funobj, function (error, result) {
+                    connection.commit(function (err, info) {
+                        if (err) {
+                            console.log("执行事务失败，" + err);
+                            connection.rollback(function (err) {
+                                connection.release();
+                                return;
+                            });
+                        } else {
+                            result = {
+                                code: 200,
+                                msg: '修改成功'
+                            };
+                            jsonWrite(res, result);
+                            connection.release();
+                        }
+                    })
+                });
+            });
+        });
+    },
+    queryById(req, res, next) {
+        var id = req.params.articleid;
         pool.getConnection(function (err, connection) {
             connection.query($articlesql.queryById, id, function (err, result) {
                 if (err) {
@@ -273,7 +400,7 @@ module.exports = {
         var tagname = 'bick',
             currentPage = 2,
             pageSize = 1;
-        
+
         pool.getConnection(function (err, connection) {
             connection.query($articlesql.queryByTagname, [tagname, currentPage * pageSize, pageSize], function (err, result) {
                 if (err) {
@@ -348,5 +475,30 @@ module.exports = {
             });
         });
     },
+    addComment(req, res, next) {
+        // var comment = req.body.comment,
+        //     articleid = req.body.articleid,
+        //     userid = req.body.userid,
+        //     username = req.body.username;
 
+        var comment = "这是评论",
+            articleid = 40,
+            userid = 5,
+            username = 'test';
+
+        pool.getConnection((err, connection) => {
+            connection.query($articlesql.addComment, [comment, articleid, userid, username], function (err, result) {
+                if (err) {
+                    result = void 0;
+                } else {
+                    result = {
+                        code: 200,
+                        msg: '评论成功'
+                    };
+                }
+                jsonWrite(res, result);
+                connection.release();
+            });
+        });
+    },
 };

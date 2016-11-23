@@ -4,7 +4,7 @@ var userDao = require('../dao/userDao'),
 module.exports = function (app) {
 
     app.get('/test', (req, res, next) => {
-        articleDao.queryList(req, res, next);
+        articleDao.addComment(req, res, next);
     });
 
     // app.get('/test1', (req, res, next) => {
@@ -74,6 +74,11 @@ module.exports = function (app) {
     //获取文章列表
     app.get('/articlelist', (req, res, next) => {
         articleDao.queryList(req, res, next);
+    });
+
+    //发表评论
+    app.post('/comment', (req, res, next) => {
+        articleDao.addComment(req, res, next);
     });
 
     //判断已登录
