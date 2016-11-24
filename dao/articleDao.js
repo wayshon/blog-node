@@ -305,31 +305,6 @@ module.exports = {
             });
         });
     },
-    queryById(req, res, next) {
-        var id = req.params.articleid;
-        pool.getConnection(function (err, connection) {
-            connection.query($articlesql.queryById, id, function (err, result) {
-                if (err) {
-                    jsonWrite(res, undefined);
-                    connection.release();
-                    return;
-                }
-                if (result == null) {
-                    jsonWrite(res, {
-                        code: '500',
-                        msg: '无记录'
-                    });
-                } else {
-                    // req.session.user = user;
-                    jsonWrite(res, {
-                        code: '200',
-                        ob: result
-                    });
-                }
-                connection.release();
-            });
-        });
-    },
     queryByTitle(req, res, next) {
         // var title = req.query.title,
         //     currentPage = req.query.currentPage,
