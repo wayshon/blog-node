@@ -4,12 +4,15 @@ var userDao = require('../dao/userDao'),
 module.exports = function (app) {
 
     app.get('/test1', (req, res, next) => {
+        console.log("************************************")
+        console.log(req)
         req.session.user="ttttttt";
         res.end('111111111111');
     });
     app.get('/test2', (req, res, next) => {
-        console.log(req.session);
-        res.end(req.session.user);
+        console.log("#####################################")
+        console.log(req);
+        res.end('2222222222222');
     });
 
     // app.get('/test', (req, res, next) => {
