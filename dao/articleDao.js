@@ -170,9 +170,9 @@ module.exports = {
         var title = "[转载]" + 'ttttt',
             content = 'qwertyuuioplkjhgfdsazxcvbnm',
             tags = ['bick', 'swiming'],
-            userid = 6,
+            userid = 2,
             date = new Date().toLocaleString(),
-            fromid = req.body.fromid;
+            fromid = 6;
 
         pool.getConnection((err, connection) => {
             //开启事务
@@ -211,6 +211,7 @@ module.exports = {
                                 if (err) {
                                     console.log("执行事务失败，" + err);
                                     connection.rollback(function (err) {
+                                        jsonWrite(res, undefined);
                                         connection.release();
                                         return;
                                     });
@@ -225,6 +226,7 @@ module.exports = {
                             })
                         });
                     } else {
+                        console.log(err)
                         jsonWrite(res, undefined);
                         connection.release();
                         return;
@@ -251,7 +253,9 @@ module.exports = {
         });
     },
     queryById(req, res, next) {
-        var id = req.params.articleid;
+        // var id = req.params.articleid;
+        var id = 6;
+        
         pool.getConnection((err, connection) => {
             //开启事务
             connection.beginTransaction(function (err) {
@@ -295,7 +299,7 @@ module.exports = {
                         } else {
                             result = {
                                 code: 200,
-                                msg: '修改成功'
+                                ob: result
                             };
                             jsonWrite(res, result);
                             connection.release();

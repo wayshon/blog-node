@@ -10,7 +10,7 @@ var article = {
     queryAll: 'select * from article limit ?, ?',
     reprint:'INSERT INTO article(id, userid, title, content, date, fromid) VALUES(0,?,?,?,?,?)',
     insertReprint: 'INSERT INTO reprint(id, fromid, toid) VALUES(0,?,?)',
-    reprintCount: 'select count(*) from reprint where fromid=?',
+    reprintCount: 'select count(*) as sum from reprint where fromid=?',
     addComment:'INSERT INTO comments(id, comment, articleid, userid, nickname) VALUES(0,?,?,?,?)',
     queryComment: 'select * from comments where articleid=?',
     
