@@ -3,6 +3,7 @@ var mysql = require('mysql'),
     $articlesql = require('./articleSqlMapping'),
     $tagsql = require('./tagsSqlMapping'),
     $article_tagssql = require('./article_tagsSqlMapping'),
+    $usersql = require('./userSqlMapping'),
     async = require('async');
 
 // 使用连接池，提升性能
@@ -333,7 +334,7 @@ module.exports = {
         // var title = req.query.title,
         //     currentPage = req.query.currentPage,
         //     pageSize = req.query.pageSize;
-        var title = 'ttttt',
+        var title = 'tt',
             currentPage = 0,
             pageSize = 2;
 
@@ -476,28 +477,54 @@ module.exports = {
         });
     },
     addComment(req, res, next) {
+
         // var comment = req.body.comment,
         //     articleid = req.body.articleid,
-        //     userid = req.body.userid,
-        //     username = req.body.username;
+        //     userid = req.body.userid;
 
-        var comment = "这是评论",
-            articleid = 40,
-            userid = 5,
-            username = 'test';
+        var comment = "评论呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵",
+            articleid = 6,
+            userid = 6;
 
         pool.getConnection((err, connection) => {
-            connection.query($articlesql.addComment, [comment, articleid, userid, username], function (err, result) {
+            //开启事务
+            connection.beginTransaction(function (err) {
                 if (err) {
-                    result = void 0;
-                } else {
-                    result = {
-                        code: 200,
-                        msg: '评论成功'
-                    };
+                    jsonWrite(res, undefined);
+                    connection.release();
+                    return;
                 }
-                jsonWrite(res, result);
-                connection.release();
+
+                async.waterfall([
+                    function (cb) {
+                        connection.query($usersql.queryNickname, userid, function (err, result) {
+                            console.log(result[0].nickname);
+                            cb(err, result[0].nickname);
+                        });
+                    },
+                    function (result, cb) {
+                        connection.query($articlesql.addComment, [comment, articleid, userid, result], function (err, result) {
+                            cb(err, result);
+                        });
+                    }
+                ], function (err, result) {
+                    connection.commit(function (err, info) {
+                        if (err) {
+                            console.log("执行事务失败，" + err);
+                            connection.rollback(function (err) {
+                                connection.release();
+                                return;
+                            });
+                        } else {
+                            result = {
+                                code: 200,
+                                msg: '评论成功'
+                            };
+                            jsonWrite(res, result);
+                            connection.release();
+                        }
+                    })
+                });
             });
         });
     },

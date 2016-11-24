@@ -6,7 +6,8 @@ var user = {
     delete: 'delete from user where id=?',
     queryById: 'select * from user where id=?',
     queryByName: 'select * from user where username=?',
-    queryAll: 'select * from user'
+    queryAll: 'select * from user',
+    queryNickname: 'select nickname from user where id=?',
 };
 
 module.exports = user;
