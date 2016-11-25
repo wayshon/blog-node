@@ -2,7 +2,8 @@
 crypto 是 Node.js 的一个核心模块，我们用它生成散列值来加密密码
 User与Post是对数据库中用户集合与博客集合的封装
 */
-var crypto = require('crypto');
+var crypto = require('crypto'),
+    session = require('../dao/session');
 
 // 实现与MySQL交互
 var mysql = require('mysql');
@@ -16,8 +17,8 @@ var pool = mysql.createPool($db.mysql);
 var jsonWrite = function (res, ret) {
     if (typeof ret === 'undefined') {
         res.json({
-            code: '500',
-            msg: '操作失败'
+            code: 500,
+            msg: '操作失败 '
         });
     } else {
         res.json(ret);
@@ -28,6 +29,7 @@ module.exports = {
     add(req, res, next) {
         var username = req.body.username,
             email = req.body.email,
+            nickname = req.body.nickname,
             md5 = crypto.createHash('md5'),
             password = md5.update(req.body.password).digest('hex');
         pool.getConnection((err, connection) => {
@@ -43,14 +45,25 @@ module.exports = {
                         msg: '用户已存在'
                     });
                 } else {
-                    connection.query($sql.insert, [username, password, email], (err, result) => {
-                        if (result) {
-                            result = {
-                                code: 200,
-                                msg: '注册成功'
-                            };
+                    connection.query($sql.insert, [username, password, email, nickname], (err, result) => {
+                        if (err) {
+                            console.log(err)
+                            jsonWrite(res, undefined)
+                        } else {
+                            var userid = result.insertId
+                            session.insert(userid, (err, sessionid) => {
+                                if (err) {
+                                    jsonWrite(res, undefined)
+                                } else {
+                                    jsonWrite(res, {
+                                        code: 200,
+                                        user: userid,
+                                        sessionid: sessionid,
+                                        msg: '注册成功'
+                                    });
+                                }
+                            });
                         }
-                        jsonWrite(res, result);
                     });
                 }
 
@@ -70,7 +83,7 @@ module.exports = {
                     connection.release();
                     return;
                 }
-                
+
                 if (result == null) {
                     jsonWrite(res, {
                         code: '500',
@@ -82,11 +95,18 @@ module.exports = {
                         msg: '密码错误'
                     });
                 } else {
-                    req.session.user = result[0].id;
-                    jsonWrite(res, {
-                        code: '200',
-                        userid: result[0].id,
-                        msg: '登录成功'
+                    var userid = result[0].id;
+                    session.insert(userid, (err, sessionid) => {
+                        if (err) {
+                            jsonWrite(res, undefined)
+                        } else {
+                            jsonWrite(res, {
+                                code: 200,
+                                user: userid,
+                                sessionid: sessionid,
+                                msg: '登录成功'
+                            });
+                        }
                     });
                 }
 

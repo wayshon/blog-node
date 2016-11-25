@@ -11,7 +11,7 @@
  Target Server Version : 50714
  File Encoding         : utf-8
 
- Date: 11/24/2016 11:24:34 AM
+ Date: 11/25/2016 18:17:01 PM
 */
 
 SET NAMES utf8;
@@ -36,13 +36,13 @@ CREATE TABLE `article` (
   KEY `userid_5` (`userid`),
   KEY `userid_6` (`userid`),
   CONSTRAINT `user_id` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `article`
 -- ----------------------------
 BEGIN;
-INSERT INTO `article` VALUES ('5', '6', 'uuuuuuu', 'asdfghjkl', '2016-11-23 12:44:57.000000', null), ('6', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-11-23 12:44:19.000000', null);
+INSERT INTO `article` VALUES ('5', '6', 'uuuuuuu', 'asdfghjkl', '2016-11-23 12:44:57.000000', null), ('6', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-11-23 12:44:19.000000', null), ('9', '2', '[转载]ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-11-24 18:16:33.000000', '6');
 COMMIT;
 
 -- ----------------------------
@@ -63,7 +63,7 @@ CREATE TABLE `article_tags` (
 --  Records of `article_tags`
 -- ----------------------------
 BEGIN;
-INSERT INTO `article_tags` VALUES ('boxing', '5'), ('game', '5'), ('bick', '6'), ('swiming', '6');
+INSERT INTO `article_tags` VALUES ('boxing', '5'), ('game', '5'), ('bick', '6'), ('swiming', '6'), ('bick', '9'), ('swiming', '9');
 COMMIT;
 
 -- ----------------------------
@@ -99,24 +99,31 @@ CREATE TABLE `reprint` (
   PRIMARY KEY (`id`),
   KEY `fromid` (`fromid`),
   CONSTRAINT `from_id` FOREIGN KEY (`fromid`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Records of `reprint`
+-- ----------------------------
+BEGIN;
+INSERT INTO `reprint` VALUES ('1', '6', '9');
+COMMIT;
 
 -- ----------------------------
 --  Table structure for `sessions`
 -- ----------------------------
 DROP TABLE IF EXISTS `sessions`;
 CREATE TABLE `sessions` (
-  `session_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `expires` int(11) unsigned NOT NULL,
-  `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-  PRIMARY KEY (`session_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  `id` varchar(255) NOT NULL,
+  `expires` bigint(20) NOT NULL,
+  `data` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `sessions`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sessions` VALUES ('7BostdgA-EWNxRyYXo8Y9Gar9ZKZjfIZ', '1479957471', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31312d32345430333a31373a35312e3335325a222c22687474704f6e6c79223a747275652c2270617468223a222f227d7d), ('8dJdMA0Eif2eht_b005KLf_f3DNF-Qzo', '1479957196', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31312d32345430333a31333a31362e3031325a222c22687474704f6e6c79223a747275652c2270617468223a222f227d7d), ('rOlUpeunPpDoltIHSqMF9JuWuH8WKx5M', '1479957447', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31312d32345430333a31373a32372e3032375a222c22687474704f6e6c79223a747275652c2270617468223a222f227d7d), ('u75J4pWMjy_OVq-dYjnmtCrp6V19I6t6', '1479957345', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31312d32345430333a31353a34352e3030325a222c22687474704f6e6c79223a747275652c2270617468223a222f227d7d);
+INSERT INTO `sessions` VALUES ('0wjm4rd34wjjf144pnrzwu3di', '1480066670047', 'ttt'), ('6pf04lnrt1znbymnlmdwzmpldi', '1480066725802', 'ttt'), ('efjyhkdg7wyeqn2gz0ur0y66r', '1480066067457', 'ttt'), ('faz4wpozc2jwn9t7cosi3sor', '1480066454686', 'ttt'), ('g1m2658jbaejn827g04jqncdi', '1480068553802', '6'), ('jg1y0h3ykk03wtvha25a5rk9', '1480068952533', '7'), ('oh86zhul0og9xu8wy3jcq5mi', '1480066853683', 'ttt'), ('yflaqo53i3jflu94sf00y66r', '1480066641316', 'ttt');
 COMMIT;
 
 -- ----------------------------
@@ -146,13 +153,13 @@ CREATE TABLE `user` (
   `email` text NOT NULL,
   `nickname` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `user`
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES ('1', 'aaa', '111', '', '111'), ('2', 'bbb', '222', '', '222'), ('4', 'ddd', '550a141f12de6341fba65b0ad0433500', '123456@163.com', '444'), ('6', 'qwer', '962012d09b8170d912f0669f6d7d9d07', 'qwer@163.com', '666');
+INSERT INTO `user` VALUES ('1', 'aaa', '111', '', '111'), ('2', 'bbb', '222', '', '222'), ('4', 'ddd', '550a141f12de6341fba65b0ad0433500', '123456@163.com', '444'), ('6', 'qwer', '962012d09b8170d912f0669f6d7d9d07', 'qwer@163.com', '666'), ('7', 'asdf', '912ec803b2ce49e4a541068d495ab570', 'asdf@qq.com', 'vvv');
 COMMIT;
 
 -- ----------------------------
