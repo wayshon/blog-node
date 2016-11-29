@@ -98,5 +98,21 @@ app.listen(app.get('port'), () => {
   console.log(`run in: http://localhost:${app.get('port')}`);
 });
 
+//socket.io
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+io.sockets.on('connection', function (socket) {
+
+  socket.on('join', function (data) {
+    io.sockets.emit('msg', { from: '系统', content: data.username + '加入聊天' })
+  });
+
+  socket.on('msg', function (data) {
+    io.sockets.emit('msg', { from: data.from, content: data.content });
+  });
+
+});
+server.listen(4088);
+
 //导出app实例供其他模块调用
 module.exports = app;
