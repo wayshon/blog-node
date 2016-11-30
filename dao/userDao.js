@@ -51,22 +51,37 @@ module.exports = {
                 console.log(err)
                 jsonWrite(res, undefined)
             } else {
-                pool.getConnection((err, connection) => {
-                    connection.query($sql.addAvatar, absolutePath, function (err, result) {
-                        if (err) {
-                            console.log(err)
-                            jsonWrite(res, undefined)
-                        } else {
-                            jsonWrite(res, {
-                                code: 200,
-                                ob: {
-                                    path: absolutePath
-                                },
-                                msg: "上传成功"
-                            });
-                        }
-                        connection.release();
-                    });
+                jsonWrite(res, {
+                    code: 200,
+                    ob: {
+                        path: absolutePath
+                    },
+                    msg: "上传成功"
+                });
+            }
+        });
+    },
+    uploadImg(req, res, next) {
+        var dataBuffer = new Buffer(req.body.img, 'base64'),
+            username = "xxxx",
+            name = req.body.name,
+            imgpath = "images/" + username + "/" + name + ".png",
+            absolutePath = "http://" + iptable['en0:1'] + ":9911/" + imgpath;
+        if (!fs.existsSync("./public/images/" + username)) {
+            fs.mkdirSync("./public/images/" + username);
+        }
+
+        fs.writeFile("./public/" + imgpath, dataBuffer, function (err) {
+            if (err) {
+                console.log(err)
+                jsonWrite(res, undefined)
+            } else {
+                jsonWrite(res, {
+                    code: 200,
+                    ob: {
+                        path: absolutePath
+                    },
+                    msg: "上传成功"
                 });
             }
         });
@@ -215,13 +230,14 @@ module.exports = {
     // delete(req, res, next) {
     //     // delete by Id
     //     pool.getConnection(function (err, connection) {
-    //         var id = +req.query.id;
+    //         var id = req.query.id;
     //         connection.query($sql.delete, id, function (err, result) {
     //             if (result.affectedRows > 0) {
     //                 result = {
     //                     code: 200,
     //                     msg: '删除成功'
     //                 };
+    //                 /**这里可以写删除用户上传的图片文件夹 */
     //             } else {
     //                 result = void 0;
     //             }

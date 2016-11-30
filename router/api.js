@@ -32,6 +32,10 @@ module.exports = function (app) {
     app.post('/avatar', (req, res, next) => {
         userDao.addAvatar(req, res, next);
     });
+    //上传图片
+    app.post('/uploadimg', (req, res, next) => {
+        userDao.uploadImg(req, res, next);
+    });
 
     //进入标签页,一红有哪些标签
     app.get('/tags', function (req, res, next) {
