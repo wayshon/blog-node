@@ -3,7 +3,9 @@ crypto 是 Node.js 的一个核心模块，我们用它生成散列值来加密�
 User与Post是对数据库中用户集合与博客集合的封装
 */
 var crypto = require('crypto'),
-    session = require('../dao/session');
+    session = require('../dao/session'),
+    fs = require('fs'),
+    async = require('async');
 
 // 实现与MySQL交互
 var mysql = require('mysql');
@@ -25,49 +27,98 @@ var jsonWrite = function (res, ret) {
     }
 };
 
+//获取局域网ip
+var os = require('os'),
+    iptable = {},
+    ifaces = os.networkInterfaces();
+for (var dev in ifaces) {
+    ifaces[dev].forEach(function (details, alias) {
+        if (details.family == 'IPv4') {
+            iptable[dev + (alias ? ':' + alias : '')] = details.address;
+        }
+    });
+}
+// console.log(iptable['en0:1']);
+
 module.exports = {
-    add(req, res, next) {
-        var username = req.body.username,
-            email = req.body.email,
-            nickname = req.body.nickname,
-            md5 = crypto.createHash('md5'),
-            password = md5.update(req.body.password).digest('hex');
-        pool.getConnection((err, connection) => {
-            connection.query($sql.queryByName, username, (err, result) => {
-                if (err) {
-                    jsonWrite(res, undefined);
-                    connection.release();
-                    return;
-                }
-                if (result.length > 0) {
-                    jsonWrite(res, {
-                        code: 500,
-                        msg: '用户已存在'
-                    });
-                } else {
-                    connection.query($sql.insert, [username, password, email, nickname], (err, result) => {
+    addAvatar(req, res, next) {
+        var dataBuffer = new Buffer(req.body.avatar, 'base64'),
+            imgpath = "images/Avatar/" + Date.now() + ".png",
+            absolutePath = "http://" + iptable['en0:1'] + ":9911/" + imgpath;
+        console.log(imgpath)
+        fs.writeFile("./public/" + imgpath, dataBuffer, function (err) {
+            if (err) {
+                console.log(err)
+                jsonWrite(res, undefined)
+            } else {
+                pool.getConnection((err, connection) => {
+                    connection.query($sql.addAvatar, absolutePath, function (err, result) {
                         if (err) {
                             console.log(err)
                             jsonWrite(res, undefined)
                         } else {
-                            var userid = result.insertId
-                            session.insert(userid, (err, sessionid) => {
-                                if (err) {
-                                    jsonWrite(res, undefined)
-                                } else {
-                                    jsonWrite(res, {
-                                        code: 200,
-                                        user: userid,
-                                        sessionid: sessionid,
-                                        msg: '注册成功'
-                                    });
-                                }
+                            jsonWrite(res, {
+                                code: 200,
+                                ob: {
+                                    path: absolutePath
+                                },
+                                msg: "上传成功"
                             });
                         }
+                        connection.release();
+                    });
+                });
+            }
+        });
+    },
+    add(req, res, next) {
+        var username = req.body.username,
+            email = req.body.email,
+            nickname = req.body.nickname,
+            avatar = req.body.avatar,
+            md5 = crypto.createHash('md5'),
+            password = md5.update(req.body.password).digest('hex');
+        pool.getConnection((err, connection) => {
+            async.waterfall([
+                function (cb) {
+                    connection.query($sql.queryByName, username, (err, result) => {
+                        if (result.length > 0) {
+                            err = {
+                                code: 500,
+                                msg: '用户已存在'
+                            };
+                        }
+                        cb(err, result);
+                    });
+                },
+                function (result, cb) {
+                    connection.query($sql.insert, [username, password, email, nickname, avatar], (err, result) => {
+                        cb(err, result.insertId);
+                    });
+                },
+                function (userid, cb) {
+                    session.insert(userid, (err, sessionid) => {
+                        cb(err, sessionid)
                     });
                 }
-
-                connection.release();
+            ], function (err, userid, sessionid) {
+                connection.commit(function (err, info) {
+                    if (err) {
+                        console.log("执行事务失败，" + err);
+                        connection.rollback(function (err) {
+                            connection.release();
+                            return;
+                        });
+                    } else {
+                        jsonWrite(res, {
+                            code: 200,
+                            user: userid,
+                            sessionid: sessionid,
+                            msg: '注册成功'
+                        });
+                        connection.release();
+                    }
+                })
             });
         });
     },

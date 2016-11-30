@@ -20,13 +20,17 @@ module.exports = function (app) {
     app.get('/', (req, res, next) => {
         articleDao.queryAll(req, res, next);
     });
-    //注册 ------待弄
+    //注册 
     app.post('/reg', (req, res, next) => {
         userDao.add(req, res, next);
     });
-    //登入 ------待弄
+    //登入 
     app.post('/login', (req, res, next) => {
         userDao.queryByName(req, res, next);
+    });
+    //上传头像
+    app.post('/avatar', (req, res, next) => {
+        userDao.addAvatar(req, res, next);
     });
 
     //进入标签页,一红有哪些标签

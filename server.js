@@ -114,5 +114,6 @@ io.sockets.on('connection', function (socket) {
 });
 server.listen(4088);
 
+
 //导出app实例供其他模块调用
 module.exports = app;
