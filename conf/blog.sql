@@ -11,7 +11,7 @@
  Target Server Version : 50714
  File Encoding         : utf-8
 
- Date: 11/25/2016 18:17:01 PM
+ Date: 11/30/2016 18:39:10 PM
 */
 
 SET NAMES utf8;
@@ -123,7 +123,7 @@ CREATE TABLE `sessions` (
 --  Records of `sessions`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sessions` VALUES ('0wjm4rd34wjjf144pnrzwu3di', '1480066670047', 'ttt'), ('6pf04lnrt1znbymnlmdwzmpldi', '1480066725802', 'ttt'), ('efjyhkdg7wyeqn2gz0ur0y66r', '1480066067457', 'ttt'), ('faz4wpozc2jwn9t7cosi3sor', '1480066454686', 'ttt'), ('g1m2658jbaejn827g04jqncdi', '1480068553802', '6'), ('jg1y0h3ykk03wtvha25a5rk9', '1480068952533', '7'), ('oh86zhul0og9xu8wy3jcq5mi', '1480066853683', 'ttt'), ('yflaqo53i3jflu94sf00y66r', '1480066641316', 'ttt');
+INSERT INTO `sessions` VALUES ('0wjm4rd34wjjf144pnrzwu3di', '1480066670047', 'ttt'), ('6pf04lnrt1znbymnlmdwzmpldi', '1480066725802', 'ttt'), ('9m97hgnfjohws79fv1zizr529', '1480491765571', '9'), ('efjyhkdg7wyeqn2gz0ur0y66r', '1480066067457', 'ttt'), ('faz4wpozc2jwn9t7cosi3sor', '1480066454686', 'ttt'), ('g1m2658jbaejn827g04jqncdi', '1480068553802', '6'), ('jg1y0h3ykk03wtvha25a5rk9', '1480068952533', '7'), ('oh86zhul0og9xu8wy3jcq5mi', '1480066853683', 'ttt'), ('vq5drt09o3uyeetnydgk138fr', '1480491408969', '8'), ('yflaqo53i3jflu94sf00y66r', '1480066641316', 'ttt');
 COMMIT;
 
 -- ----------------------------
@@ -152,14 +152,15 @@ CREATE TABLE `user` (
   `password` text NOT NULL,
   `email` text NOT NULL,
   `nickname` varchar(255) NOT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `user`
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES ('1', 'aaa', '111', '', '111'), ('2', 'bbb', '222', '', '222'), ('4', 'ddd', '550a141f12de6341fba65b0ad0433500', '123456@163.com', '444'), ('6', 'qwer', '962012d09b8170d912f0669f6d7d9d07', 'qwer@163.com', '666'), ('7', 'asdf', '912ec803b2ce49e4a541068d495ab570', 'asdf@qq.com', 'vvv');
+INSERT INTO `user` VALUES ('1', 'aaa', '111', '', '111', null), ('2', 'bbb', '222', '', '222', null), ('4', 'ddd', '550a141f12de6341fba65b0ad0433500', '123456@163.com', '444', null), ('6', 'qwer', '962012d09b8170d912f0669f6d7d9d07', 'qwer@163.com', '666', null), ('7', 'asdf', '912ec803b2ce49e4a541068d495ab570', 'asdf@qq.com', 'vvv', null), ('9', 'aaaa', '74b87337454200d4d33f80c4663dc5e5', 'aaaa@163.com', 'vvv', 'http://192.168.10.239:9911/images/Avatar/1480491700398.png');
 COMMIT;
 
 -- ----------------------------
