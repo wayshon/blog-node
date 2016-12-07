@@ -33,30 +33,31 @@ app.use(function (err, req, res, next) {
   next();
 });
 
-// var session = require('express-session');
-// var MySQLStore = require('express-mysql-session')(session);
-// var settings = require('./conf/setting');
-// var sessionStore = new MySQLStore({
-//   user: 'test',
-//   database: 'blog',
-//   host: '127.0.0.1',
-//   password: '123456',
-//   port: 3306,
-//   cookieSecret: 'blog',
-//   // checkExpirationInterval: 10000,
-//   // expiration: 10000,
-// });
+var session = require('express-session');
+var MySQLStore = require('express-mysql-session')(session);
+var settings = require('./conf/setting');
+var sessionStore = new MySQLStore({
+  user: 'test',
+  database: 'blog',
+  host: '127.0.0.1',
+  password: '123456',
+  port: 3306,
+  cookieSecret: 'blog',
+  // checkExpirationInterval: 10000,
+  // expiration: 10000,
+});
 
-// app.use(session({
-//   resave: false,//添加这行  
-//   saveUninitialized: true,//添加这行
-//   secret: settings.cookieSecret,
-//   key: settings.database,//cookie name
-//   cookie: { maxAge: 10000 },// 
-//   store: sessionStore
-// }));
+app.use(session({
+  resave: true,
+  rolling: true,
+  saveUninitialized: false,
+  secret: settings.cookieSecret,
+  key: settings.database,
+  cookie: { maxAge: 10000 },
+  store: sessionStore
+}));
 
-// app.sessionStore = sessionStore;
+app.sessionStore = sessionStore;
 
 // //设置跨域访问
 // app.all('*', function(req, res, next) {
@@ -104,7 +105,10 @@ var io = require('socket.io')(server);
 io.sockets.on('connection', function (socket) {
 
   socket.on('join', function (data) {
+    //广播
     io.sockets.emit('msg', { from: '系统', content: data.username + '加入聊天' })
+    //单线发
+    // socket.emit('msg', { from: '系统', content: data.username + '加入聊天' })
   });
 
   socket.on('msg', function (data) {

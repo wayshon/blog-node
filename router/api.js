@@ -5,6 +5,23 @@ var userDao = require('../dao/userDao'),
 
 module.exports = function (app) {
 
+    app.get('/test1', (req, res, next) => {
+        console.log("************************")
+        console.log(req.session)
+        req.session.user = "tttt";
+        res.json(req.sessionID);
+    });
+
+    app.get('/test2', (req, res, next) => {
+        console.log("##########################")
+        console.log(req.session)
+        app.sessionStore.get(req.sessionID, (error, session) => {
+            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+            console.log(session)
+            res.json(session);
+        });
+    });
+
     // app.get('/test2', checkLogin);
     // app.get('/test2', (req, res, next) => {
     //     res.end('2222222222222');
@@ -89,20 +106,20 @@ module.exports = function (app) {
         articleDao.addComment(req, res, next);
     });
 
-    app.get('/test1', (req, res, next) => {
+    // app.get('/test1', (req, res, next) => {
 
-        session.insert('ttt', (err, result) => {
-            if (err) {
-                console.log(err)
-                res.send({
-                    code: 500,
-                    msg: 'server error!!!! '
-                });
-            } else {
-                res.send(JSON.stringify(result));
-            }
-        });
-    });
+    //     session.insert('ttt', (err, result) => {
+    //         if (err) {
+    //             console.log(err)
+    //             res.send({
+    //                 code: 500,
+    //                 msg: 'server error!!!! '
+    //             });
+    //         } else {
+    //             res.send(JSON.stringify(result));
+    //         }
+    //     });
+    // });
 
     //登出
     app.get('/logout', function (req, res) {
