@@ -53,23 +53,25 @@ app.use(session({
   saveUninitialized: false,
   secret: settings.cookieSecret,
   key: settings.database,
-  cookie: { maxAge: 10000 },
+  cookie: { 
+    maxAge: 10000
+   },
   store: sessionStore
 }));
 
 app.sessionStore = sessionStore;
 
-// //设置跨域访问
-// app.all('*', function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", req.headers.origin);
-//     res.header("Access-Control-Allow-Credentials", "true");
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, If-Modified-Since");
-//     // res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-//     // res.header("Content-Type", "application/json;charset=utf-8");
-//     next();
-// });
+//设置跨域访问
+app.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, If-Modified-Since");
+    // res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    // res.header("Content-Type", "application/json;charset=utf-8");
+    next();
+});
 
-app.use(require('cors')());
+// app.use(require('cors')());
 
 //创建子域名和处理
 var vhost = require('vhost')

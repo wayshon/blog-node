@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<head></head>
+<body>
+  <h1 onclick="test1()">test1</h1>
+  <h1 onclick="test2()">test2</h1>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+
+    function test1() {
+        httpGet("http://localhost:9911/test1");
+    }
+
+    function test2() {
+        httpGet("http://localhost:9911/test2");
+    }
+
+    function httpGet(url) {
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "JSON",
+            success: function (data) {
+                alert(JSON.stringify(data));
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("操作失败")
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>
