@@ -9,7 +9,7 @@ module.exports = function (app) {
         console.log("************************")
         console.log(req.session)
         req.session.user = "tttt";
-        res.json(req.sessionID);
+        res.json(1111111111111);
     });
 
     app.get('/test2', (req, res, next) => {
@@ -18,8 +18,9 @@ module.exports = function (app) {
         app.sessionStore.get(req.sessionID, (error, session) => {
             console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
             console.log(session)
-            res.json(session);
+            // res.json(session);
         });
+        res.json(session);
     });
 
     // app.get('/test2', checkLogin);

@@ -27,6 +27,7 @@
     "express-mysql-session": "^1.2.0",
     "express-session": "1.9.1",
     "generic-pool": "*",
+    "marked": "^0.3.6",
     "mongodb": "2.0.42",
     "morgan": "~1.7.0",
     "multer": "1.1.0",
