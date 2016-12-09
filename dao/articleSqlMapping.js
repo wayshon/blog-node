@@ -13,6 +13,8 @@ var article = {
     reprintCount: 'select count(*) as sum from reprint where fromid=?',
     addComment:'INSERT INTO comments(id, comment, articleid, userid, nickname) VALUES(0,?,?,?,?)',
     queryComment: 'select * from comments where articleid=?',
+    queryReadCount: 'select readCount from article where id=?',
+    updateReadCount: 'update article set readCount=? where id=?',
     
 };
 

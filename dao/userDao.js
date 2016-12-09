@@ -64,7 +64,7 @@ module.exports = {
     uploadImg(req, res, next) {
         var dataBuffer = new Buffer(req.body.img, 'base64'),
             username = "xxxx",
-            name = req.body.name,
+            name = req.body.imgName,
             imgpath = "images/" + username + "/" + name + ".png",
             absolutePath = "http://" + iptable['en0:1'] + ":9911/" + imgpath;
         if (!fs.existsSync("./public/images/" + username)) {

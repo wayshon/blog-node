@@ -25,19 +25,14 @@ module.exports = function (app) {
         // res.json(session);
     });
 
-    // app.get('/test2', checkLogin);
-    // app.get('/test2', (req, res, next) => {
-    //     res.end('2222222222222');
-    // });
-
-    // app.get('/test', (req, res, next) => {
-    //     articleDao.queryById(req, res, next);
-    // });
+    app.get('/test', (req, res, next) => {
+        articleDao.queryById(req, res, next);
+    });
 
     /************************************ */
 
     //获取主页及文章
-    app.get('/', (req, res, next) => {
+    app.get('/home', (req, res, next) => {
         articleDao.queryAll(req, res, next);
     });
     //注册 
@@ -63,22 +58,22 @@ module.exports = function (app) {
     });
 
     //获取指定标签的文章
-    app.get('/tags/:tag', function (req, res, next) {
+    app.get('/articlebytag/:tag', function (req, res, next) {
         articleDao.queryByTagname(req, res, next);
     });
 
     //获取根据title搜索到的结果
-    app.get('/search', function (req, res, next) {
+    app.get('/articlebytitle', function (req, res, next) {
         articleDao.queryByTitle(req, res, next);
     });
 
     //根据用户返回其文章
-    app.get('/u/:userid', function (req, res, next) {
+    app.get('/articlebyuser/:userid', function (req, res, next) {
         articleDao.queryByUserid(req, res, next);
     });
 
     //根据id获取指定文章
-    app.get('/p/:articleid', function (req, res, next) {
+    app.get('/articlebyid/:articleid', function (req, res, next) {
         articleDao.queryById(req, res, next);
     });
 
@@ -97,6 +92,11 @@ module.exports = function (app) {
     //更新文章
     app.post('/edit', (req, res, next) => {
         articleDao.update(req, res, next);
+    });
+
+    //转载文章
+    app.post('/reprint', (req, res, next) => {
+        articleDao.reprint(req, res, next);
     });
 
     //删除指定文章

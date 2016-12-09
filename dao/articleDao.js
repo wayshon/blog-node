@@ -255,7 +255,7 @@ module.exports = {
     queryById(req, res, next) {
         // var id = req.params.articleid;
         var id = 6;
-        
+
         pool.getConnection((err, connection) => {
             //开启事务
             connection.beginTransaction(function (err) {
@@ -265,7 +265,28 @@ module.exports = {
                     return;
                 }
 
+                var waterfunarr = [
+                    function (cb) {
+                        connection.query($articlesql.queryReadCount, id, function (err, result) {
+                            cb(err, result[0].readCount);
+                        });
+                    },
+                    function (readCount, cb) {
+                        readCount++;
+                        connection.query($articlesql.updateReadCount, [readCount, id], function (err, result) {
+                            cb(err, result);
+                        });
+                    }
+                ]
+
+
+
                 var funobj = {
+                    readCount(cb) {
+                        async.waterfall(waterfunarr, function (err, result) {
+                            cb(err, result);
+                        });
+                    },
                     queryArticle(cb) {
                         connection.query($articlesql.queryById, id, function (err, result) {
                             cb(err, result);
