@@ -142,8 +142,9 @@ module.exports = function (app) {
                 msg: '未登录!'
             }
             res.json(content);
+        } else {
+            next();
         }
-        next();
     }
     //判断未登录
     function checkNotLogin(req, res, next) {
@@ -154,8 +155,9 @@ module.exports = function (app) {
                 msg: '已登录!'
             }
             res.json(content);
+        } else {
+            next();
         }
-        next();
     }
 
     // app.get('/testselfsession', (req, res, next) => {
