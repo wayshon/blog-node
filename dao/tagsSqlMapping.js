@@ -1,6 +1,6 @@
 var tag = {
     insert:'INSERT INTO tags(name) VALUES(?)',
-    queryAll: 'select * from tags'
+    queryAll: 'select name from tags'
 };
 
 module.exports = tag;

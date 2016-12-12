@@ -11,7 +11,7 @@
  Target Server Version : 50714
  File Encoding         : utf-8
 
- Date: 12/07/2016 22:32:47 PM
+ Date: 12/12/2016 19:42:01 PM
 */
 
 SET NAMES utf8;
@@ -28,6 +28,7 @@ CREATE TABLE `article` (
   `content` varchar(555) DEFAULT NULL,
   `date` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   `fromid` int(11) DEFAULT NULL,
+  `readCount` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `userid` (`userid`),
   KEY `userid_2` (`userid`),
@@ -36,13 +37,13 @@ CREATE TABLE `article` (
   KEY `userid_5` (`userid`),
   KEY `userid_6` (`userid`),
   CONSTRAINT `user_id` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `article`
 -- ----------------------------
 BEGIN;
-INSERT INTO `article` VALUES ('5', '6', 'uuuuuuu', 'asdfghjkl', '2016-11-23 12:44:57.000000', null), ('6', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-11-23 12:44:19.000000', null), ('9', '2', '[转载]ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-11-24 18:16:33.000000', '6');
+INSERT INTO `article` VALUES ('5', '6', 'uuuuuuu', 'asdfghjkl', '2016-12-12 18:03:50.000000', null, null), ('6', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-09 19:00:21.881176', null, '12'), ('9', '2', '[转载]ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-09 18:45:42.227026', '6', '1'), ('38', '4', 'hhh', 'fdhfghfghfgh', '2016-12-12 14:31:43.536962', null, null), ('39', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-12 15:05:14.000000', null, '0'), ('40', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-12 15:06:22.000000', null, '0'), ('41', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-12 15:06:27.000000', null, '0'), ('43', '12', '小杨的的的', 'jhdsfiluhasdfhlakdjshflaksdhfuiefjbvjhbdv', '2016-12-12 15:32:54.000000', null, '0'), ('44', '12', '小杨的第二次', '啊啊啊啊啊啊啊啊啊啊啊啊啊啊', '2016-12-12 18:13:22.122453', null, '3'), ('58', '12', '[转载]小杨的第二次', '啊啊啊啊啊啊啊啊啊啊啊啊啊啊', '2016-12-12 18:59:17.000000', '44', '0');
 COMMIT;
 
 -- ----------------------------
@@ -63,7 +64,7 @@ CREATE TABLE `article_tags` (
 --  Records of `article_tags`
 -- ----------------------------
 BEGIN;
-INSERT INTO `article_tags` VALUES ('boxing', '5'), ('game', '5'), ('bick', '6'), ('swiming', '6'), ('bick', '9'), ('swiming', '9');
+INSERT INTO `article_tags` VALUES ('boxing', '5'), ('game', '5'), ('bick', '6'), ('swiming', '6'), ('bick', '9'), ('swiming', '9'), ('bick', '39'), ('swiming', '39'), ('bick', '40'), ('swiming', '40'), ('bick', '41'), ('swiming', '41'), ('\'dayang1\'', '43'), ('\'dayang2\'', '43'), ('bbb', '44'), ('ccc', '44'), ('bbb', '58'), ('ccc', '58');
 COMMIT;
 
 -- ----------------------------
@@ -79,13 +80,13 @@ CREATE TABLE `comments` (
   PRIMARY KEY (`id`),
   KEY `articleid` (`articleid`),
   CONSTRAINT `comment_articleid` FOREIGN KEY (`articleid`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `comments`
 -- ----------------------------
 BEGIN;
-INSERT INTO `comments` VALUES ('1', '这是评论', '38', '6', 'qwer'), ('4', '评论啦啦啦啦啦', '6', '6', '[object Object]'), ('5', '评论呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵', '6', '6', '666'), ('7', '评论呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵', '6', '3', '用户已删除');
+INSERT INTO `comments` VALUES ('1', '这是评论', '38', '6', 'qwer'), ('4', '评论啦啦啦啦啦', '6', '6', '[object Object]'), ('5', '评论呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵', '6', '6', '666'), ('7', '评论呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵', '6', '3', '用户已删除'), ('8', '这是评论哈哈哈哈', '58', '12', '大杨'), ('9', '我还要评一个', '58', '12', '大杨'), ('10', '我还要评10个', '58', '12', '大杨');
 COMMIT;
 
 -- ----------------------------
@@ -99,13 +100,13 @@ CREATE TABLE `reprint` (
   PRIMARY KEY (`id`),
   KEY `fromid` (`fromid`),
   CONSTRAINT `from_id` FOREIGN KEY (`fromid`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `reprint`
 -- ----------------------------
 BEGIN;
-INSERT INTO `reprint` VALUES ('1', '6', '9');
+INSERT INTO `reprint` VALUES ('1', '6', '9'), ('2', '44', '57'), ('3', '44', '58');
 COMMIT;
 
 -- ----------------------------
@@ -123,7 +124,7 @@ CREATE TABLE `sessions` (
 --  Records of `sessions`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sessions` VALUES ('3-qfeER_Z51vOJ2JXYlFPf84h14wBHhV', '1481120483', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a32313a32332e3230305a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('CNX7cqlS4C7JzP3eTqz3DnGNR3NEGxE7', '1481121014', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a393939392c2265787069726573223a22323031362d31322d30375431343a33303a31342e3032335a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('G8-fA1AdDukmwfXttjhHBsTUndFHMTQK', '1481119854', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a31303a35342e3036345a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('Gv8EnwFPcntMZkThOE15pSI86ekXRiyl', '1481119725', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a30383a34352e3038315a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('IY553n0Jh8PZeVr44BNuWL7faANAVfNf', '1481120397', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a31393a35372e3130355a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('JPfpJIyFXMC_ahunkZXhiW08hLrqqTFQ', '1481120940', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a32383a35392e3735355a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('VYFsEDlj73YwIHMvn9K3gVeSpZUrYEVF', '1481120462', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a32313a30312e3732355a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('Yd9hGrm2SmmxMlQ69SfbDo2vSrdQKdax', '1481121071', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a393939392c2265787069726573223a22323031362d31322d30375431343a33313a31302e3538365a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('_pevjOTwBibvBT0wABE7VWW-MdD7pAdD', '1481119787', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a30393a34372e3039345a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('f4rIQDQ4tRN7WbM6vzU4D2gHV9Oq1hcs', '1481120448', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a32303a34382e3030305a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('jDh5WBXfH-i5trW0i6uoDoCx3tCaMWJX', '1481119907', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a31313a34362e3530385a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('nEZL4IjhvxsUVeVqs328yrveHelHiGxy', '1481120302', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a31383a32322e3236315a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('oA3CsMJJy_r9eHLCbVxcfKickXxRqRsP', '1481120359', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a31393a31382e3835305a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('pQ_tMVX6OV50gDLiNJ9QdZDOGggjnGYb', '1481119766', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a30393a32352e3539315a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d), ('vh9JiWp1iis0fl9lNjrN9Mqk17LHdlHh', '1481120246', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a31303030302c2265787069726573223a22323031362d31322d30375431343a31373a32352e3635305a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a2274747474227d);
+INSERT INTO `sessions` VALUES ('GeyaH7uo7QeyXRblLzuGiVd6S1SgAcLv', '1481543247', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a313830303030302c2265787069726573223a22323031362d31322d31325431313a34373a32362e3635395a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a31327d);
 COMMIT;
 
 -- ----------------------------
@@ -139,7 +140,7 @@ CREATE TABLE `tags` (
 --  Records of `tags`
 -- ----------------------------
 BEGIN;
-INSERT INTO `tags` VALUES ('bick'), ('boxing'), ('game'), ('swiming');
+INSERT INTO `tags` VALUES ('\'dayang1\''), ('\'dayang2\''), ('aaa'), ('bbb'), ('bick'), ('boxing'), ('ccc'), ('game'), ('swiming');
 COMMIT;
 
 -- ----------------------------
@@ -154,14 +155,26 @@ CREATE TABLE `user` (
   `nickname` varchar(255) NOT NULL,
   `avatar` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `user`
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES ('1', 'aaa', '111', '', '111', null), ('2', 'bbb', '222', '', '222', null), ('4', 'ddd', '550a141f12de6341fba65b0ad0433500', '123456@163.com', '444', null), ('6', 'qwer', '962012d09b8170d912f0669f6d7d9d07', 'qwer@163.com', '666', null), ('7', 'asdf', '912ec803b2ce49e4a541068d495ab570', 'asdf@qq.com', 'vvv', null), ('9', 'aaaa', '74b87337454200d4d33f80c4663dc5e5', 'aaaa@163.com', 'vvv', 'http://192.168.10.239:9911/images/Avatar/1480491700398.png');
+INSERT INTO `user` VALUES ('1', 'aaa', '111', '', '111', null), ('2', 'bbb', '222', '', '222', null), ('4', 'ddd', '550a141f12de6341fba65b0ad0433500', '123456@163.com', '444', null), ('6', 'qwer', '962012d09b8170d912f0669f6d7d9d07', 'qwer@163.com', '666', null), ('7', 'asdf', '912ec803b2ce49e4a541068d495ab570', 'asdf@qq.com', 'vvv', null), ('9', 'aaaa', '74b87337454200d4d33f80c4663dc5e5', 'aaaa@163.com', 'vvv', 'http://192.168.10.239:9911/images/Avatar/1480491700398.png'), ('10', 'laowang', 'e10adc3949ba59abbe56e057f20f883e', '123456@163.com', '老王', 'http://192.168.10.239:9911/images/Avatar/1480491700398.png'), ('11', 'xiaoyang', 'e10adc3949ba59abbe56e057f20f883e', '123456@163.com', '小杨', 'http://192.168.10.239:9911/images/Avatar/1480491700398.png'), ('12', 'dayang', 'e10adc3949ba59abbe56e057f20f883e', '123456@163.com', '大杨', 'http://192.168.10.239:9911/images/Avatar/1480491700398.png');
 COMMIT;
+
+-- ----------------------------
+--  View structure for `article_list_view`
+-- ----------------------------
+DROP VIEW IF EXISTS `article_list_view`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`test`@`%` SQL SECURITY DEFINER VIEW `article_list_view` AS select `article`.`id` AS `id`,`article`.`userid` AS `userid`,`article`.`title` AS `title`,`article`.`date` AS `date`,`article`.`readCount` AS `readCount`,`user`.`avatar` AS `avatar`,`user`.`nickname` AS `nickname`,count(`comments`.`articleid`) AS `commentCount`,count(`reprint`.`fromid`) AS `reprintCount` from (((`article` left join `user` on((`article`.`userid` = `user`.`id`))) left join `comments` on((`article`.`id` = `comments`.`articleid`))) left join `reprint` on((`article`.`id` = `reprint`.`fromid`))) group by `article`.`id`;
+
+-- ----------------------------
+--  View structure for `article_view`
+-- ----------------------------
+DROP VIEW IF EXISTS `article_view`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`test`@`%` SQL SECURITY DEFINER VIEW `article_view` AS select `article`.`id` AS `id`,`article`.`userid` AS `userid`,`article`.`title` AS `title`,`article`.`content` AS `content`,`article`.`date` AS `date`,`article`.`readCount` AS `readCount`,`user`.`avatar` AS `avatar`,`user`.`nickname` AS `nickname`,count(`comments`.`articleid`) AS `commentCount`,count(`reprint`.`fromid`) AS `reprintCount` from (((`article` left join `user` on((`article`.`userid` = `user`.`id`))) left join `comments` on((`article`.`id` = `comments`.`articleid`))) left join `reprint` on((`article`.`id` = `reprint`.`fromid`))) group by `article`.`id`;
 
 -- ----------------------------
 --  Triggers structure for table user

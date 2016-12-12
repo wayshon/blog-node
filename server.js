@@ -54,7 +54,7 @@ app.use(session({
   secret: settings.cookieSecret,
   key: settings.database,
   cookie: { 
-    maxAge: 10000
+    maxAge: 1000 * 60 * 30
    },
   store: sessionStore
 }));

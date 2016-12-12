@@ -3,7 +3,7 @@ crypto 是 Node.js 的一个核心模块，我们用它生成散列值来加密�
 User与Post是对数据库中用户集合与博客集合的封装
 */
 var crypto = require('crypto'),
-    session = require('../dao/session'),
+    // session = require('../dao/session'),
     fs = require('fs'),
     async = require('async');
 
@@ -63,7 +63,7 @@ module.exports = {
     },
     uploadImg(req, res, next) {
         var dataBuffer = new Buffer(req.body.img, 'base64'),
-            username = "xxxx",
+            username = req.session.user,
             name = req.body.imgName,
             imgpath = "images/" + username + "/" + name + ".png",
             absolutePath = "http://" + iptable['en0:1'] + ":9911/" + imgpath;
@@ -90,50 +90,51 @@ module.exports = {
         var username = req.body.username,
             email = req.body.email,
             nickname = req.body.nickname,
-            avatar = req.body.avatar,
+            avatar = req.body.avatar || "",
             md5 = crypto.createHash('md5'),
             password = md5.update(req.body.password).digest('hex');
         pool.getConnection((err, connection) => {
-            async.waterfall([
-                function (cb) {
-                    connection.query($sql.queryByName, username, (err, result) => {
-                        if (result.length > 0) {
-                            err = {
-                                code: 500,
-                                msg: '用户已存在'
-                            };
-                        }
-                        cb(err, result);
-                    });
-                },
-                function (result, cb) {
-                    connection.query($sql.insert, [username, password, email, nickname, avatar], (err, result) => {
-                        cb(err, result.insertId);
-                    });
-                },
-                function (userid, cb) {
-                    session.insert(userid, (err, sessionid) => {
-                        cb(err, sessionid)
-                    });
+            connection.beginTransaction(function (err) {
+                if (err) {
+                    jsonWrite(res, undefined);
+                    connection.release();
+                    return;
                 }
-            ], function (err, userid, sessionid) {
-                connection.commit(function (err, info) {
-                    if (err) {
-                        console.log("执行事务失败，" + err);
-                        connection.rollback(function (err) {
-                            connection.release();
-                            return;
+                async.waterfall([
+                    function (cb) {
+                        connection.query($sql.queryByName, username, (err, result) => {
+                            if (result.length > 0) {
+                                err = {
+                                    code: 500,
+                                    msg: '用户已存在'
+                                };
+                            }
+                            cb(err, result);
                         });
-                    } else {
-                        jsonWrite(res, {
-                            code: 200,
-                            user: userid,
-                            sessionid: sessionid,
-                            msg: '注册成功'
+                    },
+                    function (result, cb) {
+                        connection.query($sql.insert, [username, password, email, nickname, avatar], (err, result) => {
+                            cb(err, result.insertId);
                         });
-                        connection.release();
                     }
-                })
+                ], function (err, userid) {
+                    connection.commit(function (err, info) {
+                        if (err) {
+                            console.log("执行事务失败，" + err);
+                            connection.rollback(function (err) {
+                                connection.release();
+                                return;
+                            });
+                        } else {
+                            req.session.user = userid;
+                            jsonWrite(res, {
+                                code: 200,
+                                msg: '注册成功'
+                            });
+                            connection.release();
+                        }
+                    })
+                });
             });
         });
     },
@@ -149,7 +150,6 @@ module.exports = {
                     connection.release();
                     return;
                 }
-
                 if (result == null) {
                     jsonWrite(res, {
                         code: '500',
@@ -161,19 +161,16 @@ module.exports = {
                         msg: '密码错误'
                     });
                 } else {
-                    var userid = result[0].id;
-                    session.insert(userid, (err, sessionid) => {
-                        if (err) {
-                            jsonWrite(res, undefined)
-                        } else {
-                            jsonWrite(res, {
-                                code: 200,
-                                user: userid,
-                                sessionid: sessionid,
-                                msg: '登录成功'
-                            });
-                        }
-                    });
+                    if (err) {
+                        console.log(err)
+                        jsonWrite(res, undefined)
+                    } else {
+                        req.session.user = result[0].id;
+                        jsonWrite(res, {
+                            code: 200,
+                            msg: '登录成功'
+                        });
+                    }
                 }
 
                 connection.release();

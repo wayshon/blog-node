@@ -23,19 +23,19 @@ var jsonWrite = function (res, ret) {
 
 module.exports = {
     add(req, res, next) {
-        // var title = req.body.title,
-        //     content = req.body.content,
-        //     tags = req.body.tags,
-        //     userid = req.session.user,
-        //     date = new Date().toLocaleString(),
-        //     readCount = 0;
-
-        var title = 'ttttt',
-            content = 'qwertyuuioplkjhgfdsazxcvbnm',
-            tags = ['bick', 'swiming'],
-            userid = 6,
+        var title = req.body.title,
+            content = req.body.content,
+            tags = req.body.tags || [],
+            userid = req.session.user,
             date = new Date().toLocaleString(),
             readCount = 0;
+
+        // var title = 'ttttt',
+        //     content = 'qwertyuuioplkjhgfdsazxcvbnm',
+        //     tags = ['bick', 'swiming'],
+        //     userid = 6,
+        //     date = new Date().toLocaleString(),
+        //     readCount = 0;
 
         pool.getConnection((err, connection) => {
             //开启事务
@@ -91,17 +91,17 @@ module.exports = {
         });
     },
     update(req, res, next) {
-        // var id = req.body.id,
-        //     title = req.body.title,
-        //     content = req.body.content,
-        //     tags = req.body.tag,
-        //     date = new Date().toLocaleString();
-
-        var id = 5,
-            title = 'uuuuuuu',
-            content = 'asdfghjkl',
-            tags = ['boxing', 'game'],
+        var id = req.body.id,
+            title = req.body.title,
+            content = req.body.content,
+            tags = req.body.tags || [],
             date = new Date().toLocaleString();
+
+        // var id = 5,
+        //     title = 'uuuuuuu',
+        //     content = 'asdfghjkl',
+        //     tags = ['boxing', 'game'],
+        //     date = new Date().toLocaleString();
 
         pool.getConnection((err, connection) => {
             //开启事务
@@ -162,34 +162,44 @@ module.exports = {
         });
     },
     reprint(req, res, next) {
-        // var title = "[转载]" + req.body.title,
-        //     content = req.body.content,
-        //     tags = req.body.tags,
-        //     userid = req.session.user,
-        //     date = new Date().toLocaleString(),
-        //     fromid = req.body.fromid,
-        //     readCount = 0;
-
-        var title = "[转载]" + 'ttttt',
-            content = 'qwertyuuioplkjhgfdsazxcvbnm',
-            tags = ['bick', 'swiming'],
-            userid = 2,
-            date = new Date().toLocaleString(),
-            fromid = 6,
-            readCount = 0;
+        var id = req.query.id;
 
         pool.getConnection((err, connection) => {
-            //开启事务
             connection.beginTransaction(function (err) {
                 if (err) {
                     jsonWrite(res, undefined);
                     connection.release();
                     return;
                 }
-
-                connection.query($articlesql.reprint, [userid, title, content, date, fromid], (err, result) => {
-                    if (result) {
-                        var articleid = result.insertId;
+                async.waterfall([
+                    function (cb) {
+                        connection.query($articlesql.queryById, id, function (err, result) {
+                            cb(err, result)
+                        });
+                    },
+                    function (result, cb) {
+                        var article = result[0];
+                        connection.query($article_tagssql.queryTags, article.id, function (err, tags) {
+                            var reTags = tags.map((v) => v.tagname);
+                            article.tags = reTags;
+                            cb(err, article)
+                        });
+                    },
+                    function (article, cb) {
+                        var title = "[转载]" + article.title,
+                            content = article.content,
+                            userid = req.session.user,
+                            date = new Date().toLocaleString(),
+                            fromid = article.id,
+                            readCount = 0;
+                        connection.query($articlesql.reprint, [userid, title, content, date, fromid, readCount], (err, result) => {
+                            cb(err, article, result);
+                        });
+                    },
+                    function (article, result, callback) {
+                        var articleid = result.insertId,
+                            tags = article.tags,
+                            fromid = article.id;
                         var funobj = {
                             insertReprint(cb) {
                                 connection.query($articlesql.insertReprint, [fromid, articleid], (err, result) => {
@@ -211,36 +221,34 @@ module.exports = {
                         })
 
                         async.parallel(funobj, function (error, result) {
-                            connection.commit(function (err, info) {
-                                if (err) {
-                                    console.log("执行事务失败，" + err);
-                                    connection.rollback(function (err) {
-                                        jsonWrite(res, undefined);
-                                        connection.release();
-                                        return;
-                                    });
-                                } else {
-                                    result = {
-                                        code: 200,
-                                        msg: '发布成功'
-                                    };
-                                    jsonWrite(res, result);
-                                    connection.release();
-                                }
-                            })
+                            callback(error, articleid, result);
                         });
-                    } else {
-                        console.log(err)
-                        jsonWrite(res, undefined);
-                        connection.release();
-                        return;
                     }
+                ], function (err, articleid, result) {
+                    connection.commit(function (err, info) {
+                        if (err) {
+                            console.log("执行事务失败，" + err);
+                            connection.rollback(function (err) {
+                                connection.release();
+                                return;
+                            });
+                        } else {
+                            jsonWrite(res, {
+                                code: 200,
+                                msg: "成功",
+                                ob: {
+                                    id: articleid
+                                }
+                            });
+                            connection.release();
+                        }
+                    })
                 });
             });
         });
     },
     delete(req, res, next) {
-        var id = parseInt(req.params.id);
+        var id = req.query.id;
         pool.getConnection(function (err, connection) {
             connection.query($articlesql.delete, id, function (err, result) {
                 if (result.affectedRows > 0) {
@@ -257,19 +265,16 @@ module.exports = {
         });
     },
     queryById(req, res, next) {
-        // var id = req.params.articleid;
-        var id = 6;
+        var id = req.query.id;
 
         pool.getConnection((err, connection) => {
-            //开启事务
             connection.beginTransaction(function (err) {
                 if (err) {
                     jsonWrite(res, undefined);
                     connection.release();
                     return;
                 }
-
-                var waterfunarr = [
+                async.waterfall([
                     function (cb) {
                         connection.query($articlesql.queryReadCount, id, function (err, result) {
                             cb(err, result[0].readCount);
@@ -278,40 +283,23 @@ module.exports = {
                     function (readCount, cb) {
                         readCount++;
                         connection.query($articlesql.updateReadCount, [readCount, id], function (err, result) {
-                            cb(err, result);
+                            cb(err)
+                        });
+                    },
+                    function (cb) {
+                        connection.query($articlesql.queryById, id, function (err, result) {
+                            cb(err, result)
+                        });
+                    },
+                    function (result, cb) {
+                        var article = result[0];
+                        connection.query($article_tagssql.queryTags, article.id, function (err, tags) {
+                            var reTags = tags.map((v) => v.tagname);
+                            article.tags = reTags;
+                            cb(err, article)
                         });
                     }
-                ];
-
-                var funobj = {
-                    readCount(cb) {
-                        async.waterfall(waterfunarr, function (err, result) {
-                            cb(err, result);
-                        });
-                    },
-                    queryArticle(cb) {
-                        connection.query($articlesql.queryById, id, function (err, result) {
-                            cb(err, result);
-                        });
-                    },
-                    queryTags(cb) {
-                        connection.query($article_tagssql.queryByArticleid, id, function (err, result) {
-                            cb(err, result);
-                        });
-                    },
-                    queryComments(cb) {
-                        connection.query($articlesql.queryComment, id, function (err, result) {
-                            cb(err, result);
-                        });
-                    },
-                    reprintCount(cb) {
-                        connection.query($articlesql.reprintCount, id, function (err, result) {
-                            cb(err, result);
-                        });
-                    },
-                };
-
-                async.parallel(funobj, function (error, result) {
+                ], function (err, article) {
                     connection.commit(function (err, info) {
                         if (err) {
                             console.log("执行事务失败，" + err);
@@ -320,23 +308,11 @@ module.exports = {
                                 return;
                             });
                         } else {
-                            result = {
+                            jsonWrite(res, {
                                 code: 200,
-                                ob: result
-                            };
-
-                            console.log(result);
-
-                            var data = {
-                                code: 200,
-                                msg: "获取成功",
-                                ob: {
-                                    avatar: "",
-                                    
-                                } 
-                            }
-
-                            jsonWrite(res, result);
+                                msg: "成功",
+                                ob: article
+                            });
                             connection.release();
                         }
                     })
@@ -345,107 +321,166 @@ module.exports = {
         });
     },
     queryByTitle(req, res, next) {
-        // var title = req.query.title,
-        //     currentPage = req.query.currentPage,
-        //     pageSize = req.query.pageSize;
-        var title = 'tt',
-            currentPage = 0,
-            pageSize = 2;
+        var title = req.query.title,
+            currentPage = req.query.currentPage || 1,
+            pageSize = req.query.pageSize || 10;
 
         pool.getConnection((err, connection) => {
-            connection.query($articlesql.queryByTitle, [title, currentPage * pageSize, pageSize], function (err, result) {
+            connection.beginTransaction(function (err) {
                 if (err) {
                     jsonWrite(res, undefined);
                     connection.release();
                     return;
                 }
-                if (result == null) {
-                    jsonWrite(res, {
-                        code: '500',
-                        msg: '无记录'
-                    });
-                } else {
-                    // req.session.user = user;
-                    jsonWrite(res, {
-                        code: '200',
-                        listOb: result
-                    });
-                }
+                connection.query($articlesql.queryByTitle, [title, (currentPage - 1) * pageSize, pageSize], function (err, result) {
+                    if (err) {
+                        jsonWrite(res, undefined);
+                        connection.release();
+                        return;
+                    } else {
+                        var funobj = {};
+                        result.forEach((value, i) => {
+                            funobj['tagsfun' + i] = function (cb) {
+                                connection.query($article_tagssql.queryTags, value.id, function (err, tags) {
+                                    var reTags = tags.map((v) => v.tagname);
+                                    value.tags = reTags;
+                                    cb(err);
+                                });
+                            }
+                        })
 
-                connection.release();
+                        async.parallel(funobj, function (error, endResult) {
+                            connection.commit(function (err, info) {
+                                if (err) {
+                                    console.log("执行事务失败，" + err);
+                                    connection.rollback(function (err) {
+                                        connection.release();
+                                        return;
+                                    });
+                                } else {
+                                    jsonWrite(res, {
+                                        code: 200,
+                                        msg: "成功",
+                                        listOb: result
+                                    });
+                                    connection.release();
+                                }
+                            })
+                        });
+                    }
+                });
             });
         });
     },
     queryByUserid(req, res, next) {
-        // var id = parseInt(req.params.userid),
-        //     currentPage = req.query.currentPage,
-        //     pageSize = req.query.pageSize;
-        var id = 6,
-            currentPage = 1,
-            pageSize = 2;
+        var id = req.query.userid,
+            currentPage = req.query.currentPage || 1,
+            pageSize = req.query.pageSize || 10;
 
         pool.getConnection(function (err, connection) {
-            connection.query($articlesql.queryByUserid, [id, currentPage * pageSize, pageSize], function (err, result) {
+            connection.beginTransaction(function (err) {
                 if (err) {
                     jsonWrite(res, undefined);
                     connection.release();
                     return;
                 }
-                if (result == null) {
-                    jsonWrite(res, {
-                        code: '500',
-                        msg: '无记录'
-                    });
-                } else {
-                    // req.session.user = user;
-                    jsonWrite(res, {
-                        code: '200',
-                        listOb: result
-                    });
-                }
-                connection.release();
+                connection.query($articlesql.queryByUserid, [id, (currentPage - 1) * pageSize, pageSize], function (err, result) {
+                    if (err) {
+                        jsonWrite(res, undefined);
+                        connection.release();
+                        return;
+                    } else {
+                        var funobj = {};
+                        result.forEach((value, i) => {
+                            funobj['tagsfun' + i] = function (cb) {
+                                connection.query($article_tagssql.queryTags, value.id, function (err, tags) {
+                                    var reTags = tags.map((v) => v.tagname);
+                                    value.tags = reTags;
+                                    cb(err);
+                                });
+                            }
+                        })
+
+                        async.parallel(funobj, function (error, endResult) {
+                            connection.commit(function (err, info) {
+                                if (err) {
+                                    console.log("执行事务失败，" + err);
+                                    connection.rollback(function (err) {
+                                        connection.release();
+                                        return;
+                                    });
+                                } else {
+                                    jsonWrite(res, {
+                                        code: 200,
+                                        msg: "成功",
+                                        listOb: result
+                                    });
+                                    connection.release();
+                                }
+                            })
+                        });
+                    }
+                });
             });
         });
     },
     queryByTagname(req, res, next) {
-        // var tagname = req.params.tag,
-        //     currentPage = req.query.currentPage,
-        //     pageSize = req.query.pageSize;
-
-        var tagname = 'bick',
-            currentPage = 2,
-            pageSize = 1;
+        var tagname = req.query.tagname,
+            currentPage = req.query.currentPage || 1,
+            pageSize = req.query.pageSize || 10;
 
         pool.getConnection(function (err, connection) {
-            connection.query($articlesql.queryByTagname, [tagname, currentPage * pageSize, pageSize], function (err, result) {
+            connection.beginTransaction(function (err) {
                 if (err) {
                     jsonWrite(res, undefined);
                     connection.release();
                     return;
                 }
-                if (result == null) {
-                    jsonWrite(res, {
-                        code: '500',
-                        msg: '无记录'
-                    });
-                } else {
-                    // req.session.user = user;
-                    jsonWrite(res, {
-                        code: '200',
-                        listOb: result
-                    });
-                }
-                connection.release();
+                connection.query($articlesql.queryByTagname, [tagname, (currentPage - 1) * pageSize, pageSize], function (err, result) {
+                    if (err) {
+                        jsonWrite(res, undefined);
+                        connection.release();
+                    } else {
+                        var funobj = {};
+                        result.forEach((value, i) => {
+                            funobj['tagsfun' + i] = function (cb) {
+                                connection.query($article_tagssql.queryTags, value.id, function (err, tags) {
+                                    var reTags = tags.map((v) => v.tagname);
+                                    value.tags = reTags;
+                                    cb(err);
+                                });
+                            }
+                        })
+
+                        async.parallel(funobj, function (error, endResult) {
+                            connection.commit(function (err, info) {
+                                if (err) {
+                                    console.log("执行事务失败，" + err);
+                                    connection.rollback(function (err) {
+                                        connection.release();
+                                        return;
+                                    });
+                                } else {
+                                    jsonWrite(res, {
+                                        code: 200,
+                                        msg: "成功",
+                                        listOb: result
+                                    });
+                                    connection.release();
+                                }
+                            })
+                        });
+                    }
+                });
             });
         });
     },
     queryList(req, res, next) {
-        // var currentPage = req.query.currentPage,
-        //     pageSize = req.query.pageSize;
-        var currentPage = 0,
-            pageSize = 2;
+        var currentPage = req.query.currentPage || 1,
+            pageSize = req.query.pageSize || 10;
+
         pool.getConnection((err, connection) => {
-            connection.query($articlesql.queryList, [currentPage * pageSize, pageSize], function (err, result) {
+            connection.query($articlesql.queryList, [(currentPage - 1) * pageSize, pageSize], function (err, result) {
                 if (err) {
                     result = void 0;
                 } else {
@@ -460,45 +495,93 @@ module.exports = {
         });
     },
     queryAll(req, res, next) {
-        // var currentPage = req.query.currentPage,
-        //     pageSize = req.query.pageSize;
-        var currentPage = 0,
-            pageSize = 2;
+        var currentPage = req.query.currentPage || 1,
+            pageSize = req.query.pageSize || 10;
+
         pool.getConnection((err, connection) => {
-            connection.query($articlesql.queryAll, [currentPage * pageSize, pageSize], function (err, result) {
+            // connection.query($articlesql.queryAll, [(currentPage - 1) * pageSize, pageSize], function (err, result) {
+            //     if (err) {
+            //         jsonWrite(res, undefined);
+            //     } else {
+            //         jsonWrite(res, {
+            //             code: 200,
+            //             msg: "成功",
+            //             listOb: result
+            //         });
+            //     }
+
+            //     connection.release();
+            // });
+
+            connection.beginTransaction(function (err) {
                 if (err) {
-                    result = void 0;
-                } else {
-                    result = {
-                        code: 200,
-                        listOb: result
-                    };
+                    jsonWrite(res, undefined);
+                    connection.release();
+                    return;
                 }
-                jsonWrite(res, result);
-                connection.release();
+                connection.query($articlesql.queryAll, [(currentPage - 1) * pageSize, pageSize], function (err, result) {
+                    if (err) {
+                        jsonWrite(res, undefined);
+                    } else {
+                        var funobj = {};
+                        result.forEach((value, i) => {
+                            funobj['tagsfun' + i] = function (cb) {
+                                connection.query($article_tagssql.queryTags, value.id, function (err, tags) {
+                                    var reTags = tags.map((v) => v.tagname);
+                                    value.tags = reTags;
+                                    cb(err);
+                                });
+                            }
+                        })
+
+                        async.parallel(funobj, function (error, endResult) {
+                            connection.commit(function (err, info) {
+                                if (err) {
+                                    console.log("执行事务失败，" + err);
+                                    connection.rollback(function (err) {
+                                        connection.release();
+                                        return;
+                                    });
+                                } else {
+                                    jsonWrite(res, {
+                                        code: 200,
+                                        msg: "成功",
+                                        listOb: result
+                                    });
+                                    connection.release();
+                                }
+                            })
+                        });
+                    }
+                });
             });
         });
     },
     allTags(req, res, next) {
         pool.getConnection((err, connection) => {
             connection.query($tagsql.queryAll, function (err, result) {
-                jsonWrite(res, {
-                    code: 200,
-                    listOb: result
-                });
+                if (err) {
+                    jsonWrite(res, undefined);
+                } else {
+                    var reTags = tags.map((v) => v.name);
+                    jsonWrite(res, {
+                        code: 200,
+                        msg: '成功',
+                        listOb: reTags
+                    });
+                }
                 connection.release();
             });
         });
     },
     addComment(req, res, next) {
+        var comment = req.body.comment,
+            articleid = req.body.articleid,
+            userid = req.session.user;
 
-        // var comment = req.body.comment,
-        //     articleid = req.body.articleid,
-        //     userid = req.body.userid;
-
-        var comment = "评论呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵",
-            articleid = 6,
-            userid = 6;
+        // var comment = "评论呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵",
+        //     articleid = 6,
+        //     userid = 6;
 
         pool.getConnection((err, connection) => {
             //开启事务
@@ -512,7 +595,6 @@ module.exports = {
                 async.waterfall([
                     function (cb) {
                         connection.query($usersql.queryNickname, userid, function (err, result) {
-                            console.log(result[0].nickname);
                             cb(err, result[0].nickname);
                         });
                     },
