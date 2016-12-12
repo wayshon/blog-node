@@ -1081,3 +1081,5 @@
 ::1 - - [09/Dec/2016:11:00:21 +0000] "GET /test/ HTTP/1.1" 200 806 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"
 ::1 - - [09/Dec/2016:11:00:21 +0000] "GET /test/ HTTP/1.1" 200 807 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"
 ::1 - - [09/Dec/2016:11:00:21 +0000] "GET /test/ HTTP/1.1" 200 807 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"
+::1 - - [09/Dec/2016:12:16:20 +0000] "GET /test HTTP/1.1" 301 43 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"
+::1 - - [09/Dec/2016:12:16:20 +0000] "GET /test/ HTTP/1.1" 200 806 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"

@@ -1,5 +1,5 @@
 var article = {
-    insert:'INSERT INTO article(id, userid, title, content, date) VALUES(0,?,?,?,?)',
+    insert:'INSERT INTO article(id, userid, title, content, date, readCount) VALUES(0,?,?,?,?,?)',
     update:'update article set title=?, content=?, date=? where id=?',
     delete: 'delete from article where id=?',
     queryById: 'select * from article where id=?',

@@ -27,13 +27,15 @@ module.exports = {
         //     content = req.body.content,
         //     tags = req.body.tags,
         //     userid = req.session.user,
-        //     date = new Date().toLocaleString();
+        //     date = new Date().toLocaleString(),
+        //     readCount = 0;
 
         var title = 'ttttt',
             content = 'qwertyuuioplkjhgfdsazxcvbnm',
             tags = ['bick', 'swiming'],
             userid = 6,
-            date = new Date().toLocaleString();
+            date = new Date().toLocaleString(),
+            readCount = 0;
 
         pool.getConnection((err, connection) => {
             //开启事务
@@ -44,7 +46,7 @@ module.exports = {
                     return;
                 }
 
-                connection.query($articlesql.insert, [userid, title, content, date], (err, result) => {
+                connection.query($articlesql.insert, [userid, title, content, date, readCount], (err, result) => {
                     if (result) {
                         var articleid = result.insertId;
                         var funobj = {};
@@ -165,14 +167,16 @@ module.exports = {
         //     tags = req.body.tags,
         //     userid = req.session.user,
         //     date = new Date().toLocaleString(),
-        //     fromid = req.body.fromid;
+        //     fromid = req.body.fromid,
+        //     readCount = 0;
 
         var title = "[转载]" + 'ttttt',
             content = 'qwertyuuioplkjhgfdsazxcvbnm',
             tags = ['bick', 'swiming'],
             userid = 2,
             date = new Date().toLocaleString(),
-            fromid = 6;
+            fromid = 6,
+            readCount = 0;
 
         pool.getConnection((err, connection) => {
             //开启事务
@@ -277,9 +281,7 @@ module.exports = {
                             cb(err, result);
                         });
                     }
-                ]
-
-
+                ];
 
                 var funobj = {
                     readCount(cb) {
@@ -322,6 +324,18 @@ module.exports = {
                                 code: 200,
                                 ob: result
                             };
+
+                            console.log(result);
+
+                            var data = {
+                                code: 200,
+                                msg: "获取成功",
+                                ob: {
+                                    avatar: "",
+                                    
+                                } 
+                            }
+
                             jsonWrite(res, result);
                             connection.release();
                         }
