@@ -88,7 +88,7 @@ module.exports = function (app) {
     //上传图片
     app.post('/uploadimg', checkLogin);
     app.post('/uploadimg', (req, res, next) => {
-        userDao.uploadImg(req, res, next);
+        articleDao.uploadImg(req, res, next);
     });
 
     //发表文章
@@ -119,6 +119,18 @@ module.exports = function (app) {
     app.post('/comment', checkLogin);
     app.post('/comment', (req, res, next) => {
         articleDao.addComment(req, res, next);
+    });
+
+    //点赞
+    app.post('/addraise', checkLogin);
+    app.post('/addpraise', (req, res, next) => {
+        articleDao.addPraise(req, res, next);
+    });
+
+    //取消点赞
+    app.post('/deletepraise', checkLogin);
+    app.post('/deletepraise', (req, res, next) => {
+        articleDao.deletePraise(req, res, next);
     });
 
     //登出

@@ -26,6 +26,7 @@ module.exports = {
         var title = req.body.title,
             content = req.body.content,
             tags = req.body.tags || [],
+            imgs = req.body.imgs || [],
             userid = req.session.user,
             date = new Date().toLocaleString(),
             readCount = 0;
@@ -63,6 +64,14 @@ module.exports = {
                             }
                         })
 
+                        imgs.forEach((v, i) => {
+                            funobj['imgfun' + i] = function (cb) {
+                                connection.query($articlesql.addImages, [articleid, v], (err, result) => {
+                                    cb(err, result);
+                                });
+                            }
+                        })
+
                         async.parallel(funobj, function (error, result) {
                             connection.commit(function (err, info) {
                                 if (err) {
@@ -95,6 +104,7 @@ module.exports = {
             title = req.body.title,
             content = req.body.content,
             tags = req.body.tags || [],
+            imgs = req.body.imgs || [],
             date = new Date().toLocaleString();
 
         // var id = 5,
@@ -129,6 +139,14 @@ module.exports = {
                             }
                             funobj['tag_articlefun' + i] = function (cb) {
                                 connection.query($article_tagssql.insert, [v, id], (err, result) => {
+                                    cb(err, result);
+                                });
+                            }
+                        })
+
+                        imgs.forEach((v, i) => {
+                            funobj['imgfun' + i] = function (cb) {
+                                connection.query($articlesql.addImages, [articleid, v], (err, result) => {
                                     cb(err, result);
                                 });
                             }
@@ -199,6 +217,7 @@ module.exports = {
                     function (article, result, callback) {
                         var articleid = result.insertId,
                             tags = article.tags,
+                            imgs = article.imgs,
                             fromid = article.id;
                         var funobj = {
                             insertReprint(cb) {
@@ -215,6 +234,14 @@ module.exports = {
                             }
                             funobj['tag_articlefun' + i] = function (cb) {
                                 connection.query($article_tagssql.insert, [v, articleid], (err, result) => {
+                                    cb(err, result);
+                                });
+                            }
+                        })
+
+                        imgs.forEach((v, i) => {
+                            funobj['imgfun' + i] = function (cb) {
+                                connection.query($articlesql.addImages, [articleid, v], (err, result) => {
                                     cb(err, result);
                                 });
                             }
@@ -298,6 +325,13 @@ module.exports = {
                             article.tags = reTags;
                             cb(err, article)
                         });
+                    },
+                    function (article, cb) {
+                        connection.query($articlesql.queryImages, article.id, function (err, imgs) {
+                            var reImgs = imgs.map((v) => v.path);
+                            article.imgs = reImgs;
+                            cb(err, article)
+                        });
                     }
                 ], function (err, article) {
                     connection.commit(function (err, info) {
@@ -344,6 +378,13 @@ module.exports = {
                                 connection.query($article_tagssql.queryTags, value.id, function (err, tags) {
                                     var reTags = tags.map((v) => v.tagname);
                                     value.tags = reTags;
+                                    cb(err);
+                                });
+                            }
+                            funobj['imgsfun' + i] = function (cb) {
+                                connection.query($articlesql.queryImages, value.id, function (err, imgs) {
+                                    var reImgs = imgs.map((v) => v.path);
+                                    value.imgs = reImgs;
                                     cb(err);
                                 });
                             }
@@ -399,6 +440,13 @@ module.exports = {
                                     cb(err);
                                 });
                             }
+                            funobj['imgsfun' + i] = function (cb) {
+                                connection.query($articlesql.queryImages, value.id, function (err, imgs) {
+                                    var reImgs = imgs.map((v) => v.path);
+                                    value.imgs = reImgs;
+                                    cb(err);
+                                });
+                            }
                         })
 
                         async.parallel(funobj, function (error, endResult) {
@@ -447,6 +495,13 @@ module.exports = {
                                 connection.query($article_tagssql.queryTags, value.id, function (err, tags) {
                                     var reTags = tags.map((v) => v.tagname);
                                     value.tags = reTags;
+                                    cb(err);
+                                });
+                            }
+                            funobj['imgsfun' + i] = function (cb) {
+                                connection.query($articlesql.queryImages, value.id, function (err, imgs) {
+                                    var reImgs = imgs.map((v) => v.path);
+                                    value.imgs = reImgs;
                                     cb(err);
                                 });
                             }
@@ -532,6 +587,13 @@ module.exports = {
                                     cb(err);
                                 });
                             }
+                            funobj['imgsfun' + i] = function (cb) {
+                                connection.query($articlesql.queryImages, value.id, function (err, imgs) {
+                                    var reImgs = imgs.map((v) => v.path);
+                                    value.imgs = reImgs;
+                                    cb(err);
+                                });
+                            }
                         })
 
                         async.parallel(funobj, function (error, endResult) {
@@ -571,6 +633,71 @@ module.exports = {
                     });
                 }
                 connection.release();
+            });
+        });
+    },
+    addPraise(req, res, next) {
+        var articleid = req.body.articleid,
+            userid = req.session.user;
+
+        pool.getConnection((err, connection) => {
+            //开启事务
+            connection.beginTransaction(function (err) {
+                if (err) {
+                    jsonWrite(res, undefined);
+                    connection.release();
+                    return;
+                }
+
+                async.waterfall([
+                    function (cb) {
+                        connection.query($usersql.queryNickname, userid, function (err, result) {
+                            cb(err, result[0].nickname);
+                        });
+                    },
+                    function (result, cb) {
+                        connection.query($articlesql.addPraise, [articleid, userid, result], function (err, result) {
+                            cb(err, result);
+                        });
+                    }
+                ], function (err, result) {
+                    connection.commit(function (err, info) {
+                        if (err) {
+                            console.log("执行事务失败，" + err);
+                            connection.rollback(function (err) {
+                                connection.release();
+                                return;
+                            });
+                        } else {
+                            result = {
+                                code: 200,
+                                msg: '点赞成功'
+                            };
+                            jsonWrite(res, result);
+                            connection.release();
+                        }
+                    })
+                });
+            });
+        });
+    },
+    deletePraise(req, res, next) {
+        var articleid = req.body.articleid,
+            userid = req.session.user;
+
+        pool.getConnection((err, connection) => {
+            connection.query($articlesql.deletePraise, [articleid, userid], function (err, result) {
+                if (err) {
+                    jsonWrite(res, {
+                        code: 500,
+                        msg: '取消失败'
+                    });
+                } else {
+                    jsonWrite(res, {
+                        code: 200,
+                        msg: '取消点赞'
+                    });
+                }
             });
         });
     },

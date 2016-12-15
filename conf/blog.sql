@@ -11,7 +11,7 @@
  Target Server Version : 50714
  File Encoding         : utf-8
 
- Date: 12/12/2016 19:42:01 PM
+ Date: 12/15/2016 12:16:42 PM
 */
 
 SET NAMES utf8;
@@ -37,13 +37,13 @@ CREATE TABLE `article` (
   KEY `userid_5` (`userid`),
   KEY `userid_6` (`userid`),
   CONSTRAINT `user_id` FOREIGN KEY (`userid`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `article`
 -- ----------------------------
 BEGIN;
-INSERT INTO `article` VALUES ('5', '6', 'uuuuuuu', 'asdfghjkl', '2016-12-12 18:03:50.000000', null, null), ('6', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-09 19:00:21.881176', null, '12'), ('9', '2', '[转载]ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-09 18:45:42.227026', '6', '1'), ('38', '4', 'hhh', 'fdhfghfghfgh', '2016-12-12 14:31:43.536962', null, null), ('39', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-12 15:05:14.000000', null, '0'), ('40', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-12 15:06:22.000000', null, '0'), ('41', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-12 15:06:27.000000', null, '0'), ('43', '12', '小杨的的的', 'jhdsfiluhasdfhlakdjshflaksdhfuiefjbvjhbdv', '2016-12-12 15:32:54.000000', null, '0'), ('44', '12', '小杨的第二次', '啊啊啊啊啊啊啊啊啊啊啊啊啊啊', '2016-12-12 18:13:22.122453', null, '3'), ('58', '12', '[转载]小杨的第二次', '啊啊啊啊啊啊啊啊啊啊啊啊啊啊', '2016-12-12 18:59:17.000000', '44', '0');
+INSERT INTO `article` VALUES ('5', '6', 'uuuuuuu', 'asdfghjkl', '2016-12-12 18:03:50.000000', null, null), ('6', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-09 19:00:21.881176', null, '12'), ('9', '2', '[转载]ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-09 18:45:42.227026', '6', '1'), ('38', '4', 'hhh', 'fdhfghfghfgh', '2016-12-12 14:31:43.536962', null, null), ('39', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-12 15:05:14.000000', null, '0'), ('40', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-12 15:06:22.000000', null, '0'), ('41', '6', 'ttttt', 'qwertyuuioplkjhgfdsazxcvbnm', '2016-12-12 15:06:27.000000', null, '0'), ('43', '12', '小杨的的的', 'jhdsfiluhasdfhlakdjshflaksdhfuiefjbvjhbdv', '2016-12-12 15:32:54.000000', null, '0'), ('44', '12', '小杨的第二次', '啊啊啊啊啊啊啊啊啊啊啊啊啊啊', '2016-12-12 18:13:22.122453', null, '3'), ('58', '12', '[转载]小杨的第二次', '啊啊啊啊啊啊啊啊啊啊啊啊啊啊', '2016-12-12 18:59:17.000000', '44', '0'), ('59', '12', '小杨的的13号', 'jhdsfiluhasdfhlakdjshflaksdhfuiefjbvjhbdv', '2016-12-13 09:43:03.000000', null, '0');
 COMMIT;
 
 -- ----------------------------
@@ -64,7 +64,7 @@ CREATE TABLE `article_tags` (
 --  Records of `article_tags`
 -- ----------------------------
 BEGIN;
-INSERT INTO `article_tags` VALUES ('boxing', '5'), ('game', '5'), ('bick', '6'), ('swiming', '6'), ('bick', '9'), ('swiming', '9'), ('bick', '39'), ('swiming', '39'), ('bick', '40'), ('swiming', '40'), ('bick', '41'), ('swiming', '41'), ('\'dayang1\'', '43'), ('\'dayang2\'', '43'), ('bbb', '44'), ('ccc', '44'), ('bbb', '58'), ('ccc', '58');
+INSERT INTO `article_tags` VALUES ('boxing', '5'), ('game', '5'), ('bick', '6'), ('swiming', '6'), ('bick', '9'), ('swiming', '9'), ('bick', '39'), ('swiming', '39'), ('bick', '40'), ('swiming', '40'), ('bick', '41'), ('swiming', '41'), ('\'dayang1\'', '43'), ('\'dayang2\'', '43'), ('bbb', '44'), ('ccc', '44'), ('bbb', '58'), ('ccc', '58'), ('aaa', '59'), ('bbb', '59');
 COMMIT;
 
 -- ----------------------------
@@ -88,6 +88,34 @@ CREATE TABLE `comments` (
 BEGIN;
 INSERT INTO `comments` VALUES ('1', '这是评论', '38', '6', 'qwer'), ('4', '评论啦啦啦啦啦', '6', '6', '[object Object]'), ('5', '评论呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵', '6', '6', '666'), ('7', '评论呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵', '6', '3', '用户已删除'), ('8', '这是评论哈哈哈哈', '58', '12', '大杨'), ('9', '我还要评一个', '58', '12', '大杨'), ('10', '我还要评10个', '58', '12', '大杨');
 COMMIT;
+
+-- ----------------------------
+--  Table structure for `images`
+-- ----------------------------
+DROP TABLE IF EXISTS `images`;
+CREATE TABLE `images` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `articleid` int(10) unsigned NOT NULL,
+  `path` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `articleid` (`articleid`),
+  CONSTRAINT `article_id_images` FOREIGN KEY (`articleid`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `praise`
+-- ----------------------------
+DROP TABLE IF EXISTS `praise`;
+CREATE TABLE `praise` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `articleid` int(10) unsigned NOT NULL,
+  `userid` int(10) unsigned NOT NULL,
+  `nickname` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userid` (`nickname`),
+  KEY `articleid` (`articleid`),
+  CONSTRAINT `article_id_praise` FOREIGN KEY (`articleid`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `reprint`
@@ -124,7 +152,7 @@ CREATE TABLE `sessions` (
 --  Records of `sessions`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sessions` VALUES ('GeyaH7uo7QeyXRblLzuGiVd6S1SgAcLv', '1481543247', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a313830303030302c2265787069726573223a22323031362d31322d31325431313a34373a32362e3635395a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a31327d);
+INSERT INTO `sessions` VALUES ('Q2phYNi-cwD_mgHfTEm6fqfKx9Ut-Pk1', '1481777135', 0x7b22636f6f6b6965223a7b226f726967696e616c4d6178416765223a313830303030302c2265787069726573223a22323031362d31322d31355430343a34353a33352e3433315a222c22687474704f6e6c79223a747275652c2270617468223a222f227d2c2275736572223a31327d);
 COMMIT;
 
 -- ----------------------------
@@ -165,16 +193,16 @@ INSERT INTO `user` VALUES ('1', 'aaa', '111', '', '111', null), ('2', 'bbb', '22
 COMMIT;
 
 -- ----------------------------
---  View structure for `article_list_view`
--- ----------------------------
-DROP VIEW IF EXISTS `article_list_view`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`test`@`%` SQL SECURITY DEFINER VIEW `article_list_view` AS select `article`.`id` AS `id`,`article`.`userid` AS `userid`,`article`.`title` AS `title`,`article`.`date` AS `date`,`article`.`readCount` AS `readCount`,`user`.`avatar` AS `avatar`,`user`.`nickname` AS `nickname`,count(`comments`.`articleid`) AS `commentCount`,count(`reprint`.`fromid`) AS `reprintCount` from (((`article` left join `user` on((`article`.`userid` = `user`.`id`))) left join `comments` on((`article`.`id` = `comments`.`articleid`))) left join `reprint` on((`article`.`id` = `reprint`.`fromid`))) group by `article`.`id`;
-
--- ----------------------------
 --  View structure for `article_view`
 -- ----------------------------
 DROP VIEW IF EXISTS `article_view`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`test`@`%` SQL SECURITY DEFINER VIEW `article_view` AS select `article`.`id` AS `id`,`article`.`userid` AS `userid`,`article`.`title` AS `title`,`article`.`content` AS `content`,`article`.`date` AS `date`,`article`.`readCount` AS `readCount`,`user`.`avatar` AS `avatar`,`user`.`nickname` AS `nickname`,count(`comments`.`articleid`) AS `commentCount`,count(`reprint`.`fromid`) AS `reprintCount` from (((`article` left join `user` on((`article`.`userid` = `user`.`id`))) left join `comments` on((`article`.`id` = `comments`.`articleid`))) left join `reprint` on((`article`.`id` = `reprint`.`fromid`))) group by `article`.`id`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`test`@`%` SQL SECURITY DEFINER VIEW `article_view` AS select `article`.`id` AS `id`,`article`.`userid` AS `userid`,`article`.`title` AS `title`,`article`.`content` AS `content`,`article`.`date` AS `date`,`article`.`readCount` AS `readCount`,`user`.`avatar` AS `avatar`,`user`.`nickname` AS `nickname`,count(`comments`.`articleid`) AS `commentCount`,count(`reprint`.`fromid`) AS `reprintCount`,count(`praise`.`articleid`) AS `praiseCount` from ((((`article` left join `user` on((`article`.`userid` = `user`.`id`))) left join `comments` on((`article`.`id` = `comments`.`articleid`))) left join `reprint` on((`article`.`id` = `reprint`.`fromid`))) left join `praise` on((`article`.`id` = `praise`.`articleid`))) group by `article`.`id`;
+
+-- ----------------------------
+--  View structure for `article_view_list`
+-- ----------------------------
+DROP VIEW IF EXISTS `article_view_list`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`test`@`%` SQL SECURITY DEFINER VIEW `article_view_list` AS select `article`.`id` AS `id`,`article`.`userid` AS `userid`,`article`.`title` AS `title`,`article`.`date` AS `date`,`article`.`readCount` AS `readCount`,`user`.`avatar` AS `avatar`,`user`.`nickname` AS `nickname`,count(`comments`.`articleid`) AS `commentCount`,count(`reprint`.`fromid`) AS `reprintCount`,count(`praise`.`articleid`) AS `praiseCount` from ((((`article` left join `user` on((`article`.`userid` = `user`.`id`))) left join `comments` on((`article`.`id` = `comments`.`articleid`))) left join `reprint` on((`article`.`id` = `reprint`.`fromid`))) left join `praise` on((`article`.`id` = `praise`.`articleid`))) group by `article`.`id`;
 
 -- ----------------------------
 --  Triggers structure for table user
@@ -182,6 +210,11 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`test`@`%` SQL SECURITY DEFINER VIEW `article
 DROP TRIGGER IF EXISTS `user_afterdelete_on_comment`;
 delimiter ;;
 CREATE TRIGGER `user_afterdelete_on_comment` AFTER DELETE ON `user` FOR EACH ROW update comments set nickname='用户已删除' where userid=old.id
+ ;;
+delimiter ;
+DROP TRIGGER IF EXISTS `user_afterdelete_on_praise`;
+delimiter ;;
+CREATE TRIGGER `user_afterdelete_on_praise` AFTER DELETE ON `user` FOR EACH ROW UPDATE praise SET nickname = '用户已删除' where userid=old.id
  ;;
 delimiter ;
 

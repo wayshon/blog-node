@@ -45,7 +45,7 @@ module.exports = {
         var dataBuffer = new Buffer(req.body.avatar, 'base64'),
             imgpath = "images/Avatar/" + Date.now() + ".png",
             absolutePath = "http://" + iptable['en0:1'] + ":9911/" + imgpath;
-        console.log(imgpath)
+        
         fs.writeFile("./public/" + imgpath, dataBuffer, function (err) {
             if (err) {
                 console.log(err)
@@ -63,12 +63,12 @@ module.exports = {
     },
     uploadImg(req, res, next) {
         var dataBuffer = new Buffer(req.body.img, 'base64'),
-            username = req.session.user,
-            name = req.body.imgName,
-            imgpath = "images/" + username + "/" + name + ".png",
+            userid = req.session.user,
+            name = req.body.imgName || Date.now(),
+            imgpath = "images/" + userid + "/" + name + ".png",
             absolutePath = "http://" + iptable['en0:1'] + ":9911/" + imgpath;
-        if (!fs.existsSync("./public/images/" + username)) {
-            fs.mkdirSync("./public/images/" + username);
+        if (!fs.existsSync("./public/images/" + userid)) {
+            fs.mkdirSync("./public/images/" + userid);
         }
 
         fs.writeFile("./public/" + imgpath, dataBuffer, function (err) {
