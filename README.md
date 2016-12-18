@@ -38,27 +38,19 @@
 
 ### 接口形态
 
-<div id="container">
-
-<div class="module">
-
 # 1 首页
 
-<div class="page">
-
 ## 1.1 首页
-
-<div class="action">
 
 ### 1.1.1 首页数据
 
 ### Description
 
-<div>获取首页文章列表</div>
+获取首页文章列表
 
 ### URL
 
-<div>/api/home</div>
+/api/home
 
 ### Request Param List
 
@@ -86,19 +78,16 @@
 | ---发布时间 | time | string |  |
 | ---用户id | userid | number |  |
 
-</div>
-
-<div class="action">
 
 ### 1.1.2 登录
 
 ### Description
 
-<div>用户登录</div>
+用户登录
 
 ### URL
 
-<div>/api/login</div>
+/api/login
 
 ### Request Param List
 
@@ -119,19 +108,15 @@
 | ---用户 id | id | number |  |
 | 状态码 | code | number |  |
 
-</div>
-
-<div class="action">
-
 ### 1.1.3 上传头像
 
 ### Description
 
-<div>上传头像</div>
+上传头像
 
 ### URL
 
-<div>/api/avatar</div>
+/api/avatar
 
 ### Request Param List
 
@@ -148,19 +133,15 @@
 |  | msg |  |  |
 | 状态码 | code | number |  |
 
-</div>
-
-<div class="action">
-
 ### 1.1.4 登出
 
 ### Description
 
-<div>用户登出</div>
+用户登出
 
 ### URL
 
-<div>/api/logout</div>
+/api/logout
 
 ### Request Param List
 
@@ -175,31 +156,19 @@
 | 状态码 | code | number |  |
 |  | ob | object |  |
 
-</div>
-
-</div>
-
-</div>
-
-<div class="module">
-
 # 2 文章
 
-<div class="page">
-
 ## 2.1 文章
-
-<div class="action">
 
 ### 2.1.1 发表文章
 
 ### Description
 
-<div>发表文章</div>
+发表文章
 
 ### URL
 
-<div>/api/article</div>
+/api/article
 
 ### Request Param List
 
@@ -220,19 +189,15 @@
 |  | ob | object |  |
 | ---文章id | id | number |  |
 
-</div>
-
-<div class="action">
-
 ### 2.1.2 修改文章
 
 ### Description
 
-<div>修改文章</div>
+修改文章
 
 ### URL
 
-<div>/api/edit</div>
+/api/edit
 
 ### Request Param List
 
@@ -253,19 +218,15 @@
 |  | ob | object |  |
 | ---文章id | id | number |  |
 
-</div>
-
-<div class="action">
-
 ### 2.1.3 上传图片
 
 ### Description
 
-<div>上传图片</div>
+上传图片
 
 ### URL
 
-<div>/api/uploadimg</div>
+/api/uploadimg
 
 ### Request Param List
 
@@ -283,19 +244,15 @@
 |  | ob | object |  |
 | ---图片路径 | path | string |  |
 
-</div>
-
-<div class="action">
-
 ### 2.1.4 删除文章
 
 ### Description
 
-<div>删除文章</div>
+删除文章
 
 ### URL
 
-<div>/api/remove</div>
+/api/remove
 
 ### Request Param List
 
@@ -311,19 +268,15 @@
 |  | ob | object |  |
 |  | code | number |  |
 
-</div>
-
-<div class="action">
-
 ### 2.1.5 发表评论
 
 ### Description
 
-<div>发表评论</div>
+发表评论
 
 ### URL
 
-<div>/api/comment</div>
+/api/comment
 
 ### Request Param List
 
@@ -341,19 +294,15 @@
 |  | ob | object |  |
 |  | code | number |  |
 
-</div>
-
-<div class="action">
-
 ### 2.1.6 转载文章
 
 ### Description
 
-<div>转载文章</div>
+转载文章
 
 ### URL
 
-<div>/api/reprint</div>
+/api/reprint
 
 ### Request Param List
 
@@ -370,19 +319,15 @@
 | ---文章id | id | number |  |
 |  | msg | string |  |
 
-</div>
-
-<div class="action">
-
 ### 2.1.7 点赞
 
 ### Description
 
-<div>点赞</div>
+点赞
 
 ### URL
 
-<div>/api/addpraise</div>
+/api/addpraise
 
 ### Request Param List
 
@@ -398,20 +343,16 @@
 |  | ob | object |  |
 |  | msg | string |  |
 |  | code | number |  |
-
-</div>
-
-<div class="action">
 
 ### 2.1.8 取消赞
 
 ### Description
 
-<div>取消赞</div>
+取消赞
 
 ### URL
 
-<div>/api/deletepraise</div>
+/api/deletepraise
 
 ### Request Param List
 
@@ -428,25 +369,17 @@
 |  | ob | object |  |
 |  | msg | string |  |
 
-</div>
-
-</div>
-
-<div class="page">
-
 ## 2.2 搜索
-
-<div class="action">
 
 ### 2.2.1 获取所有标签
 
 ### Description
 
-<div>获取所有标签</div>
+获取所有标签
 
 ### URL
 
-<div>/api/tags</div>
+/api/tags
 
 ### Request Param List
 
@@ -462,19 +395,15 @@
 | ---tag名 | name | string |  |
 |  | msg | string |  |
 
-</div>
-
-<div class="action">
-
 ### 2.2.2 获取指定标签的文章
 
 ### Description
 
-<div>获取指定标签的文章</div>
+获取指定标签的文章
 
 ### URL
 
-<div>/api/articlebytag</div>
+/api/articlebytag
 
 ### Request Param List
 
@@ -502,19 +431,15 @@
 | ---评论数 | commentCount | number |  |
 | ---图片路径 | imgs | array<string> |  |
 
-</div>
-
-<div class="action">
-
 ### 2.2.3 获取指定标题的文章
 
 ### Description
 
-<div>获取指定标题的文章</div>
+获取指定标题的文章
 
 ### URL
 
-<div>/api/articlebytitle</div>
+/api/articlebytitle
 
 ### Request Param List
 
@@ -542,19 +467,15 @@
 | ---文章 id | id | number |  |
 | 状态码 | code | number |  |
 
-</div>
-
-<div class="action">
-
 ### 2.2.4 获取指定用户的文章
 
 ### Description
 
-<div>获取指定用户的文章</div>
+获取指定用户的文章
 
 ### URL
 
-<div>/api/articlebyuser</div>
+/api/articlebyuser
 
 ### Request Param List
 
@@ -582,19 +503,15 @@
 | ---发布时间 | time | string |  |
 | 状态码 | code | number |  |
 
-</div>
-
-<div class="action">
-
 ### 2.2.5 获取指定文章内容
 
 ### Description
 
-<div>获取指定文章内容</div>
+获取指定文章内容
 
 ### URL
 
-<div>/api/articlebyid</div>
+/api/articlebyid
 
 ### Request Param List
 
@@ -621,19 +538,15 @@
 |  | msg |  |  |
 | 状态码 | code | number |  |
 
-</div>
-
-<div class="action">
-
 ### 2.2.6 获取文章简介列表
 
 ### Description
 
-<div>获取文章简介列表</div>
+获取文章简介列表
 
 ### URL
 
-<div>/api/articlelist</div>
+/api/articlelist
 
 ### Request Param List
 
@@ -652,12 +565,4 @@
 | ---发布时间 | time | string |  |
 | 状态码 | code | number |  |
 |  | msg |  |  |
-
-</div>
-
-</div>
-
-</div>
-
-</div>
 
