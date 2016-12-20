@@ -25,6 +25,10 @@ module.exports = function (app) {
         res.json(req.session);
     });
 
+    app.get('/test3', function (req, res) {
+        res.sendfile(__dirname + '/index.html');
+    });
+
     app.get('/test', (req, res, next) => {
         articleDao.queryById(req, res, next);
     });
