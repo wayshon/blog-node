@@ -37,12 +37,18 @@ var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
 var settings = require('./conf/setting');
 var sessionStore = new MySQLStore({
-  user: 'test',
-  database: 'blog',
-  host: '127.0.0.1',
-  password: '123456',
+  // user: 'test',
+  // database: 'blog',
+  // host: '127.0.0.1',
+  // password: '123456',
+  // port: 3306,
+  // cookieSecret: 'blog',
+  user: 'xblog_f',
+  database: 'xblog',
+  host: 'tjsomv82.2252.dnstoo.com',
+  password: 'wangxu4099',
   port: 3306,
-  cookieSecret: 'blog',
+  cookieSecret: 'blog'
   // checkExpirationInterval: 10000,
   // expiration: 10000,
 });
